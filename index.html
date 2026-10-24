@@ -1467,7 +1467,7 @@ function abreMenu(){
     ${R.length?`<div class="sect">Tus rutas</div><div class="mrow">${R.map(x=>`<button class="btn sm${x.id===SEC.rutaId&&S.ruta&&!S.ruta.ejemplo?' on':''}" data-m="dia" data-v="${esc(x.fecha)}">${esc(f(x.fecha))} · ${+x.n_paradas||0} par.</button>`).join('')}</div>`:'<p>No tienes rutas enviadas desde la nave.</p>'}
     <div class="acts"><button class="btn pri" data-m="act">Actualizar</button><button class="btn" data-m="demo">Ruta de ejemplo</button><button class="btn" data-m="x">Cerrar</button></div>
     <div class="acts"><button class="btn sm" data-m="clave">Me han dado otra clave</button><button class="btn sm" data-m="salir">Cerrar sesión y borrar datos</button></div>
-    <p class="tip">Las rutas llegan cifradas (AES-256) y se borran del servidor a los 7 días. «Cerrar sesión» borra también todo lo guardado en este móvil.</p></div>`;
+    <p class="tip">Las rutas llegan cifradas (AES-256) y dejas de verlas a los 7 días y se borran del servidor a los 60. «Cerrar sesión» borra también todo lo guardado en este móvil.</p></div>`;
   sh.onclick=e=>{if(e.target===sh)cierraImport();};
 }
 async function accionMenu(a,v){
