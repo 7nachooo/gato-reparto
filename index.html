@@ -1,0 +1,1439 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Gato Reparto</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self' https://gwfxslcakxwydsnkdjct.supabase.co https://router.project-osrm.org https://*.tile.openstreetmap.org https://fonts.googleapis.com https://fonts.gstatic.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="App del repartidor de El Gato con Bolsas: hoja de carga, pedidos por cliente y ruta óptima.">
+<meta name="theme-color" content="#2a1d14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gato Reparto">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+
+.leaflet-tile::selection {
+	background: transparent;
+}
+
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+
+
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+
+
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+
+.leaflet-default-icon-path { 
+	background-image: url(images/marker-icon.png);
+	}
+
+
+
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+
+
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+
+
+@media print {
+	
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+</style>
+<style>
+/* Gato Reparto · app de una mano: barra marrón arriba, tres pestañas abajo (Carga · Pedidos · Ruta), tarjetas crema.
+   Misma marca que Gato Control: rojo Gato, coral, marrón tinta, crema y kraft. Archivo Black para cifras y marca, Manrope para el resto. */
+:root{
+  --ink:#1f1a16; --ink-2:#5b4838; --muted:#7a6757; --line:#ebe3d8; --line-2:#f3ede5;
+  --bg:#f4f0ea; --card:#fffdfa; --field:#f8f3ec; --kraft:#b07a3e; --kraft-bg:#f6ecdf;
+  --brown:#2a1d14; --brown-2:#3d2a1d; --red:#c4171d; --red-2:#e8453c; --coral:#ff5f57; --cream:#fff8ef;
+  --ok:#167a46; --ok-bg:#e3f5ea; --warn:#9a5e04; --warn-bg:#fdf1dc; --bad:#c2231f; --bad-bg:#fde6e4;
+  --map-bg:#efe7dc;
+  --shadow:0 6px 18px rgba(54,35,22,.10),0 1px 3px rgba(54,35,22,.06);
+  --font:'Manrope',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --brand:'Archivo Black','Arial Black',Impact,system-ui,sans-serif;
+  --tabh:64px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ink:#f3ebe1; --ink-2:#d6c6b4; --muted:#a89584; --line:#3b2f26; --line-2:#30261f;
+  --bg:#17110d; --card:#221a14; --field:#2a2119; --kraft:#d39a5a; --kraft-bg:#33261a;
+  --ok:#5fd193; --ok-bg:#163526; --warn:#f0b24a; --warn-bg:#3a2a10; --bad:#ff7b72; --bad-bg:#3d1916;
+  --map-bg:#2a2119; --shadow:0 6px 18px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ink:#f3ebe1; --ink-2:#d6c6b4; --muted:#a89584; --line:#3b2f26; --line-2:#30261f;
+  --bg:#17110d; --card:#221a14; --field:#2a2119; --kraft:#d39a5a; --kraft-bg:#33261a;
+  --ok:#5fd193; --ok-bg:#163526; --warn:#f0b24a; --warn-bg:#3a2a10; --bad:#ff7b72; --bad-bg:#3d1916;
+  --map-bg:#2a2119; --shadow:0 6px 18px rgba(0,0,0,.35); color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--brown)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.num{font-variant-numeric:tabular-nums}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* barra superior */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;color:#fff;background:linear-gradient(100deg,#24180f,#2a1d14 40%,#3d2a1d);box-shadow:0 4px 16px rgba(40,26,16,.25)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--coral),rgba(255,95,87,0))}
+.top-in{display:flex;align-items:center;gap:12px;padding-block:10px}
+.logo{width:38px;height:38px;flex:none}
+.tt{min-width:0;flex:1}
+.tt b{display:block;font:400 17px/1.05 var(--brand);text-transform:uppercase;letter-spacing:.01em}
+.tt b em{font-style:normal;color:var(--coral)}
+.tt small{display:block;font-size:12px;color:#e2c7a9;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbtn{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);flex:none}
+.topbtn:hover{background:rgba(255,255,255,.16)}
+.prog{display:flex;align-items:center;gap:10px;padding-block:0 10px;font-size:12px;color:#eee4d7}
+.prog i{flex:1;height:6px;border-radius:6px;background:rgba(255,255,255,.14);overflow:hidden}
+.prog u{display:block;height:100%;background:linear-gradient(90deg,var(--red-2),var(--coral));border-radius:6px;transition:width .4s}
+.prog b{color:#fff;font-weight:800}
+
+main{padding-block:14px calc(var(--tabh) + env(safe-area-inset-bottom,0px) + 20px);max-width:760px;margin:0 auto;box-sizing:border-box}
+.view{display:flex;flex-direction:column;gap:14px}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--warn-bg);color:var(--warn);font-size:13px;line-height:1.4}
+.banner b{color:var(--ink)}
+.banner .i{margin-top:1px}
+
+/* cifras */
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi{background:var(--card);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);min-width:0}
+.kpi small{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi b{display:block;font:400 21px/1.15 var(--brand);margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi b span{font:700 12px var(--font);color:var(--muted);margin-left:2px}
+
+.seg{display:flex;gap:3px;padding:3px;background:var(--line-2);border-radius:12px}
+.seg button{flex:1;height:36px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(54,35,22,.16)}
+.sect{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-weight:800;font-size:14px;margin-top:4px}
+.sect small{font-weight:600;font-size:12px;color:var(--muted)}
+
+/* hoja de carga */
+.sheet{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.prow{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 14px;border-top:1px solid var(--line-2);width:100%;text-align:left;box-sizing:border-box}
+.prow:first-child{border-top:0}
+.chk{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;box-shadow:inset 0 0 0 2px var(--line);color:transparent;background:var(--field)}
+.prow.on .chk{background:var(--ok);box-shadow:none;color:#fff}
+.prow.on .pn{text-decoration:line-through;text-decoration-color:var(--muted);color:var(--muted)}
+.pn{font-weight:700;font-size:15px;line-height:1.25}
+.pd{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.pd span{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 6px;border-radius:6px;background:var(--kraft-bg);color:var(--kraft);font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
+.qty{font:400 24px/1 var(--brand);font-variant-numeric:tabular-nums;text-align:right}
+.qty small{display:block;font:700 10px var(--font);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.lrow{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 14px;border-top:1px solid var(--line-2)}
+.lrow:first-child{border-top:0}
+.lrow .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--brown);color:#fff;font:400 13px var(--brand)}
+.lrow b{display:block;font-weight:800;font-size:14px}
+.lrow small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.lrow ul{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--ink-2)}
+.lrow ul b{display:inline;font-size:13px}
+.lrow .pos{font-size:11px;font-weight:800;color:var(--kraft);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;text-align:right}
+.tip{font-size:12.5px;color:var(--muted);line-height:1.45;padding:0 2px}
+
+/* pedidos por cliente */
+.search{display:flex;align-items:center;gap:8px;height:44px;padding:0 12px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);color:var(--muted)}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:var(--ink);outline:none}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px}
+.card.done{opacity:.7}
+.ch{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:start}
+.badge{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,var(--red-2),var(--red));color:#fff;font:400 15px var(--brand);box-shadow:0 3px 8px rgba(195,10,19,.3)}
+.card.done .badge{background:var(--ok);box-shadow:none}
+.ch b{display:block;font-weight:800;font-size:16px;line-height:1.25}
+.ch small{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+.eta{text-align:right;white-space:nowrap}
+.eta b{font:400 16px var(--brand);font-variant-numeric:tabular-nums}
+.eta small{font-size:11px}
+.lines{list-style:none;margin:0;padding:0;border-radius:12px;background:var(--field)}
+.lines li{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-top:1px solid var(--line-2);font-size:14px}
+.lines li:first-child{border-top:0}
+.lines li b{font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap}
+.money{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-size:13px;color:var(--ink-2)}
+.money b{font:400 17px var(--brand);color:var(--ink);font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:7px;font-size:12px;font-weight:800;white-space:nowrap}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.note{font-size:13px;color:var(--ink-2);background:var(--kraft-bg);border-radius:10px;padding:8px 10px;line-height:1.4}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:0 14px;border-radius:12px;font-weight:800;font-size:14px;background:var(--field);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);text-decoration:none;flex:1 1 auto}
+.btn.pri{background:linear-gradient(180deg,var(--red-2),var(--red));color:#fff;box-shadow:0 3px 10px rgba(195,10,19,.3)}
+.btn.ok{background:var(--ok);color:#fff;box-shadow:none}
+.btn.sm{min-height:36px;font-size:13px;padding:0 10px;flex:0 1 auto}
+.pay{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pay button{min-height:42px;border-radius:10px;font-weight:800;font-size:13px;background:var(--field);box-shadow:inset 0 0 0 1px var(--line)}
+.pay button:hover{box-shadow:inset 0 0 0 2px var(--red-2)}
+.pay button.on{background:var(--red);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.45;cursor:not-allowed}\n.imp{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--ink-2);margin:4px 0 8px}.imp input{flex:1;min-width:0;max-width:140px;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:800 16px var(--font);padding:0 10px;text-align:right}\n.note.ofr{display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);color:var(--ink)}.note.ofr .i{flex:none;margin-top:1px;color:var(--ok)}.note.ofr b{color:var(--ok)}
+.incn{width:100%;min-height:64px;box-sizing:border-box;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:14px var(--font);padding:10px;margin-top:8px}
+.cierre{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.cierre div{background:var(--field);border-radius:12px;padding:10px 12px}.cierre small{display:block;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.cierre b{font:400 20px var(--brand)}
+.clist{list-style:none;margin:0;padding:0;font-size:13px}.clist li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--line)}.clist li:first-child{border-top:0}
+.tel{font-size:13px;color:var(--muted)}
+.tel b{color:var(--ink);user-select:all;font-variant-numeric:tabular-nums}
+
+/* ruta */
+.next{background:linear-gradient(135deg,var(--brown),var(--brown-2));color:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 24px rgba(40,26,16,.3)}
+.next small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--coral)}
+.next b{font:400 19px/1.2 var(--brand)}
+.next p{margin:0;font-size:13px;color:#e9d5be;line-height:1.4}
+.next .btn{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.next .btn.pri{background:linear-gradient(180deg,var(--red-2),var(--red));box-shadow:none}
+#map{height:min(52vh,420px);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;background:var(--map-bg);position:relative;z-index:1}
+.leaflet-container{background:var(--map-bg);font-family:var(--font)}
+.mk{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font:400 13px/1 var(--brand);box-shadow:0 0 0 3px #fff,0 3px 8px rgba(0,0,0,.35)}
+.mk.done{background:var(--ok)}
+.mk.nave{background:var(--brown);border-radius:9px;width:34px;height:34px}
+.mk.me{background:#1f6feb;width:18px;height:18px}
+.mapnote{font-size:12px;color:var(--muted);line-height:1.4;padding:0 2px}
+.opts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tog{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:11px;background:var(--card);box-shadow:var(--shadow);font-size:13px;font-weight:700}
+.tog i{width:34px;height:20px;border-radius:20px;background:var(--line);position:relative;transition:background .2s}
+.tog i::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tog.on i{background:var(--ok)}
+.tog.on i::after{transform:translateX(14px)}
+.tog input{width:88px;border:0;background:var(--field);border-radius:7px;font:inherit;font-weight:800;color:var(--ink);padding:4px 6px}
+.stops{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.st{display:grid;grid-template-columns:52px 30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line-2)}
+.st:first-child{border-top:0}
+.st .h{font:400 14px var(--brand);font-variant-numeric:tabular-nums}
+.st .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font:400 12px var(--brand)}
+.st.nave .n{background:var(--brown);border-radius:8px}
+.st.done .n{background:var(--ok)}
+.st.done .t b{text-decoration:line-through;text-decoration-color:var(--muted)}
+.st .t{min-width:0}
+.st .t b{display:block;font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st .t small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st .km{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.method{font-size:12px;color:var(--muted);line-height:1.45;padding:0 2px}
+.method b{color:var(--ink-2)}
+
+/* pestañas */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(54,35,22,.08);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs-in{display:grid;grid-template-columns:repeat(3,1fr);max-width:760px;margin:0 auto;height:var(--tabh)}
+.tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:800;color:var(--muted);position:relative}
+.tabs button .i{width:22px;height:22px}
+.tabs button.on{color:var(--red)}
+.tabs button.on::before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--red)}
+.tabs button em{position:absolute;top:8px;left:calc(50% + 8px);min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font:800 10px/18px var(--font);font-style:normal;padding:0 4px;box-sizing:border-box}
+
+/* panel importar */
+.sheetbg{position:fixed;inset:0;z-index:80;background:rgba(20,12,8,.5);display:flex;align-items:flex-end;justify-content:center}
+.panel{background:var(--card);width:100%;max-width:640px;border-radius:20px 20px 0 0;padding-top:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;max-height:88vh;overflow:auto;box-sizing:border-box}
+.panel h2{margin:0;font:400 18px var(--brand)}
+.panel p{margin:0;font-size:13px;color:var(--ink-2);line-height:1.5}
+.panel textarea{width:100%;min-height:120px;box-sizing:border-box;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:12px ui-monospace,Menlo,monospace;padding:10px}
+.panel .err{color:var(--bad);font-size:13px;font-weight:700}
+.file{position:relative;overflow:hidden}
+.file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px) + 14px);transform:translateX(-50%);z-index:90;background:var(--brown);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 8px 22px rgba(40,26,16,.35);max-width:calc(100% - 32px);box-sizing:border-box}
+.empty{background:var(--card);border-radius:16px;padding:22px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+@media (max-width:380px){.kpi b{font-size:18px}.pay{grid-template-columns:repeat(2,1fr)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* entrada segura */
+.gate{position:fixed;inset:0;z-index:95;background:linear-gradient(160deg,#2a1d14,#4a3022);color:#fff8ef;display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px));overflow:auto;box-sizing:border-box}
+.gate[hidden]{display:none}
+.gate .gc{width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px}
+.gate svg.logo{width:64px;height:64px}
+.gate h1{margin:0;font:400 24px/1.1 var(--brand);text-transform:uppercase}
+.gate h1 em{font-style:normal;color:#ff5f57}
+.gate p{margin:0;font-size:14px;line-height:1.5;color:rgba(255,248,239,.82)}
+.gate p b{color:#fff}
+.gate label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#ffd38a}
+.gate input{min-height:50px;border-radius:12px;border:1px solid rgba(255,248,239,.25);background:rgba(255,248,239,.08);color:#fff;font:700 17px var(--font);padding:0 14px;box-sizing:border-box;width:100%}
+.gate input.code{font:800 24px ui-monospace,Menlo,monospace;letter-spacing:.3em;text-align:center}
+.gate input.key{font:800 16px ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase}
+.gate input:focus{outline:2px solid #ff5f57;outline-offset:1px}
+.gate .btn.pri{min-height:50px;font-size:15px}
+.gate .lk{background:none;border:0;color:#ffd38a;font-weight:800;font-size:13px;padding:6px 0;text-decoration:underline;align-self:flex-start;cursor:pointer}
+.gate .err{background:rgba(255,95,87,.16);color:#ffb4ae;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:700}
+.gate .lock{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:rgba(255,248,239,.6);line-height:1.45}
+.gate .lock .i{width:16px;height:16px;flex:none;margin-top:1px}
+.mrow{display:flex;flex-wrap:wrap;gap:8px}
+.mrow .btn.on{background:var(--red);color:#fff}
+.priv{position:fixed;inset:0;z-index:99;background:#2a1d14;display:grid;place-items:center}.priv[hidden]{display:none}.priv .logo{width:72px;height:72px}
+</style>
+
+</head><body>
+<header class="top">
+  <div class="top-in pad">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#c4171d"/><path d="M17 24h30l-3 30H20z" fill="#fff8ef"/><path d="M24 26v-6a8 8 0 0 1 16 0v6" fill="none" stroke="#fff8ef" stroke-width="4" stroke-linecap="round"/><text x="32" y="47" font-family="Arial Black,Arial" font-weight="900" font-size="15" text-anchor="middle" fill="#c4171d">GC</text></svg>
+    <div class="tt"><b>Gato <em>Reparto</em></b><small id="hdrSub">Cargando la ruta…</small></div>
+    <button class="topbtn" id="btnImport" aria-label="Menú: días, actualizar y cerrar sesión"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <div class="prog pad"><span><b id="pgDone">0</b> de <span id="pgTot">0</span> entregados</span><i><u id="pgBar" style="width:0%"></u></i></div>
+</header>
+
+<main class="pad" id="main"></main>
+
+<nav class="tabs" aria-label="Secciones">
+  <div class="tabs-in">
+    <button data-tab="carga" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>Carga</button>
+    <button data-tab="pedidos"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>Pedidos<em id="tabPend" hidden></em></button>
+    <button data-tab="ruta"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg>Ruta</button>
+  </div>
+</nav>
+
+<div id="sheet" hidden></div>
+<div id="gate" class="gate" hidden></div>
+<div id="priv" class="priv" hidden aria-hidden="true"><svg class="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#c4171d"/><path d="M17 24h30l-3 30H20z" fill="#fff8ef"/><path d="M24 26v-6a8 8 0 0 1 16 0v6" fill="none" stroke="#fff8ef" stroke-width="4" stroke-linecap="round"/></svg></div>
+<div id="toast" class="toast" hidden></div>
+
+<script src="leaflet.js"></script>
+<script>
+"use strict";
+/* ============ datos ============ */
+// Ruta de ejemplo con clientes y pedidos inventados (no hay ningún dato real en esta app: las rutas llegan cifradas de Supabase).
+const DEMO={"fecha": "2026-10-29", "nombre": "Ruta de ejemplo · Alcorcón, Móstoles y Getafe", "vehiculo": "GT-F1", "ejemplo": true, "nave": {"nombre": "Nave · C/ Rigel Nº 14 · Griñón", "lat": 40.202107, "lon": -3.856524}, "paradas": [{"move": "EJ-1", "cli": "Carnicería La Encina", "dir": "C/ del Olmo 12, Alcorcón", "tel": "", "lat": 40.34193, "lon": -3.83086, "zona": "Alcorcón", "importe": 191.22, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 4], ["Bolsas camiseta", 3], ["Servilletas", 2]]}, {"move": "EJ-2", "cli": "Frutas Hnos. Prado", "dir": "Av. de la Libertad 40, Móstoles", "tel": "", "lat": 40.3149, "lon": -3.85942, "zona": "Móstoles", "importe": 43.51, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]]}, {"move": "EJ-3", "cli": "Pollería El Corral", "dir": "Mercado Central, puesto 8, Alcorcón", "tel": "", "lat": 40.34027, "lon": -3.82726, "zona": "Alcorcón", "importe": 39.15, "debe": 85.5, "notas": "", "pago": "", "lin": [["Bandejas de corcho nº80", 1], ["Bolsas camiseta", 1], ["Guantes de nitrilo", 1]]}, {"move": "EJ-4", "cli": "Charcutería Sierra", "dir": "C/ Mayor 21, Getafe", "tel": "", "lat": 40.31135, "lon": -3.73193, "zona": "Getafe", "importe": 145.02, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 4], ["Bolsas camiseta", 3], ["Servilletas", 2]]}, {"move": "EJ-5", "cli": "Pescados Bahía", "dir": "Mercado Central, puesto 15, Alcorcón", "tel": "", "lat": 40.34764, "lon": -3.82047, "zona": "Alcorcón", "importe": 55.71, "debe": 120, "notas": "", "pago": "", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]]}, {"move": "EJ-6", "cli": "Ultramarinos Rosa", "dir": "Galería Sur, puesto 3, Móstoles", "tel": "", "lat": 40.32528, "lon": -3.86212, "zona": "Móstoles", "importe": 213.61, "debe": 0, "notas": "", "pago": "", "lin": [["Bandejas de corcho nº80", 4], ["Bolsas camiseta", 3], ["Guantes de nitrilo", 2]]}, {"move": "EJ-7", "cli": "Carnes Selectas Vega", "dir": "Galería Sur, puesto 10, Móstoles", "tel": "", "lat": 40.31823, "lon": -3.86722, "zona": "Móstoles", "importe": 246.17, "debe": 0, "notas": "", "pago": "", "lin": [["Estuches de loncheado H40", 5], ["Bolsas de vacío", 4], ["Papel alimentario 35×50", 2]]}, {"move": "EJ-8", "cli": "Panadería El Trigal", "dir": "C/ Real 5, Móstoles", "tel": "", "lat": 40.32377, "lon": -3.86267, "zona": "Móstoles", "importe": 98.27, "debe": 64.2, "notas": "", "pago": "", "lin": [["Film 45×300", 2], ["Bolsas camiseta", 2], ["Servilletas", 1]]}, {"move": "EJ-9", "cli": "Embutidos Montaña", "dir": "Galería Sur, puesto 14, Móstoles", "tel": "", "lat": 40.3165, "lon": -3.87298, "zona": "Móstoles", "importe": 56.18, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]]}]};
+const NAVE_DEF={nombre:'Nave · C/ Rigel Nº 14 · Griñón',lat:40.202107,lon:-3.856524};
+const PARADA_MIN=10;      // minutos por entrega (descarga, firma y cobro)
+const VEL_KMH=34;         // velocidad media sin conexión (mezcla de autovía y casco urbano)
+const FACTOR_VIA=1.32;    // de línea recta a kilómetros por carretera
+
+const LS={get(k,d){try{const v=localStorage.getItem('gr_'+k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+          set(k,v){try{localStorage.setItem('gr_'+k,JSON.stringify(v));}catch(e){}}};
+
+const S={ruta:null,tab:LS.get('tab','carga'),cargaModo:LS.get('cargaModo','prod'),pedFlt:'pend',q:'',
+  hecho:{},cargado:{},salida:'07:00',vuelta:true,orden:null,legs:null,fuente:'',geo:null,desde:null,map:null,layer:null};
+
+function sanea(r){
+  if(Array.isArray(r))r={paradas:r};
+  if(!r||typeof r!=='object'||!Array.isArray(r.paradas))throw new Error('El archivo no tiene una lista de paradas («paradas»).');
+  const n=v=>{const x=+v;return isFinite(x)?x:null;};
+  const P=r.paradas.map((p,i)=>[p,i]).filter(([p])=>p&&(p.cli||p.cliente)).slice(0,80).map(([p,i])=>({
+    idx:i,pid:String(p.pid||'').toLowerCase().replace(/[^0-9a-f]/g,'').slice(0,16),id:String(p.move||p.id||('P'+(i+1))).slice(0,40),
+    cli:String(p.cli||p.cliente).slice(0,160),
+    dir:String(p.dir||p.direccion||'').slice(0,300),
+    tel:String(p.tel||'').replace(/[^\d+ ]/g,'').slice(0,40),
+    lat:n(p.lat),lon:n(p.lon),zona:String(p.zona||'').slice(0,80),
+    importe:n(p.importe)||0,debe:n(p.debe)||0,re:!!p.re,
+    notas:String(p.notas||'').slice(0,600),hora:String(p.hora||'').slice(0,8),ofrece:String(p.ofrece||'').slice(0,200),
+    lin:(Array.isArray(p.lin)?p.lin:Array.isArray(p.lineas)?p.lineas.map(l=>[l.n,l.q,l.precio]):[]).slice(0,80)
+        .map(l=>[String(l&&l[0]||'').slice(0,120),n(l&&l[1])||1,l&&l[2]!=null?n(l[2]):null]).filter(l=>l[0])
+  }));
+  if(!P.length)throw new Error('La ruta no tiene ninguna parada con cliente.');
+  const nv=r.nave&&n(r.nave.lat)!=null?{nombre:String(r.nave.nombre||'Nave').slice(0,120),lat:n(r.nave.lat),lon:n(r.nave.lon)}:NAVE_DEF;
+  return {fecha:String(r.fecha||'').slice(0,10),nombre:String(r.nombre||'Ruta del día').slice(0,120),vehiculo:String(r.vehiculo||'').slice(0,20),ejemplo:!!r.ejemplo,nave:nv,paradas:P};
+}
+
+/* ============ ruta óptima ============ */
+const rad=x=>x*Math.PI/180;
+function hav(a,b){const R=6371,dLa=rad(b.lat-a.lat),dLo=rad(b.lon-a.lon),s=Math.sin(dLa/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
+// matriz estimada sin conexión: km por carretera ≈ recta × factor; minutos a velocidad media
+function matrizLocal(pts){const n=pts.length,D=[],T=[];for(let i=0;i<n;i++){D[i]=[];T[i]=[];for(let j=0;j<n;j++){const km=i===j?0:hav(pts[i],pts[j])*FACTOR_VIA;D[i][j]=km;T[i][j]=km/VEL_KMH*60;}}return {D,T,fuente:'estimada'};}
+// con conexión (app instalada): tiempos reales por carretera de OSRM (OpenStreetMap)
+async function matrizOSRM(pts){
+  const c=pts.map(p=>p.lon.toFixed(5)+','+p.lat.toFixed(5)).join(';');
+  const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),5000);
+  try{const r=await fetch('https://router.project-osrm.org/table/v1/driving/'+c+'?annotations=duration,distance',{signal:ctl.signal});
+    const j=await r.json();if(j.code!=='Ok')throw 0;
+    return {D:j.distances.map(r=>r.map(x=>x/1000)),T:j.durations.map(r=>r.map(x=>x/60)),fuente:'carretera'};}
+  finally{clearTimeout(to);}
+}
+// Held-Karp: orden exacto que minimiza el tiempo total (hasta 13 paradas). Con más, vecino más cercano + 2-opt.
+function optimiza(T,vuelta){
+  const n=T.length-1;if(n<=0)return [];
+  if(n<=13){
+    const N=1<<n,INF=1e15,dp=new Float64Array(N*n).fill(INF),par=new Int8Array(N*n).fill(-1);
+    for(let j=0;j<n;j++)dp[(1<<j)*n+j]=T[0][j+1];
+    for(let m=1;m<N;m++)for(let j=0;j<n;j++){const v=dp[m*n+j];if(v>=INF||!(m>>j&1))continue;
+      for(let k=0;k<n;k++){if(m>>k&1)continue;const m2=m|1<<k,w=v+T[j+1][k+1];if(w<dp[m2*n+k]){dp[m2*n+k]=w;par[m2*n+k]=j;}}}
+    let best=INF,last=0,full=N-1;
+    for(let j=0;j<n;j++){const w=dp[full*n+j]+(vuelta?T[j+1][0]:0);if(w<best){best=w;last=j;}}
+    const ord=[];let m=full,j=last;while(j>=0){ord.push(j+1);const pj=par[m*n+j];m&=~(1<<j);j=pj;}
+    return ord.reverse();
+  }
+  const left=new Set([...Array(n)].map((_,i)=>i+1)),ord=[];let cur=0;
+  while(left.size){let b=null,bv=1e15;for(const k of left)if(T[cur][k]<bv){bv=T[cur][k];b=k;}ord.push(b);left.delete(b);cur=b;}
+  const cost=o=>{let s=T[0][o[0]];for(let i=1;i<o.length;i++)s+=T[o[i-1]][o[i]];return s+(vuelta?T[o[o.length-1]][0]:0);};
+  let mejora=true,c0=cost(ord);
+  while(mejora){mejora=false;for(let i=0;i<ord.length-1;i++)for(let k=i+1;k<ord.length;k++){const o2=ord.slice(0,i).concat(ord.slice(i,k+1).reverse(),ord.slice(k+1));const c2=cost(o2);if(c2<c0-1e-9){ord.splice(0,ord.length,...o2);c0=c2;mejora=true;}}}
+  return ord;
+}
+let calcN=0;
+async function calcula(){
+  const r=S.ruta;if(!r)return;const id=++calcN;
+  const pend=r.paradas.filter(p=>!S.hecho[p.id]&&p.lat!=null&&p.lon!=null);
+  const ini=S.desde||r.nave,pts=[ini,...pend];
+  if(S.vuelta&&S.desde)pts.push(r.nave);   // saliendo desde donde estoy: la vuelta es a la nave, no al punto de partida
+  let M=matrizLocal(pts);
+  render();
+  if(S.osrm&&navigator.onLine!==false&&pts.length>2){try{const m2=await matrizOSRM(pts);if(id!==calcN)return;M=m2;}catch(e){}}
+  if(id!==calcN)return;
+  // saliendo desde la posición actual con vuelta: la nave es el último punto; la columna 0 («volver al inicio») pasa a ser «volver a la nave»
+  let T=M.T;
+  if(S.desde&&S.vuelta){const k=pts.length-1;T=M.T.slice(0,k).map((row,i)=>{const r2=row.slice(0,k);if(i>0)r2[0]=M.T[i][k];return r2;});}
+  const ord=optimiza(T,S.vuelta);
+  // tramos con hora estimada de llegada
+  const legs=[];let t=hm2min(S.salida),prev=0;
+  if(S.desde){const now=new Date();t=now.getHours()*60+now.getMinutes();}
+  for(const k of ord){const km=M.D[prev][k],min=M.T[prev][k];t+=min;legs.push({p:pts[k],km,min,llega:t});t+=PARADA_MIN;prev=k;}
+  let vueltaLeg=null;
+  if(S.vuelta&&ord.length){const back=S.desde?pts.length-1:0,km=M.D[prev][back],min=M.T[prev][back];t+=min;vueltaLeg={km,min,llega:t};}
+  S.orden=legs;S.vueltaLeg=vueltaLeg;S.fuente=M.fuente;
+  // número de parada fijo para hoy: el del orden óptimo calculado desde la nave
+  // se fija la primera vez que se calcula la ruta del día (con nada entregado) y ya no cambia: es el número que lleva el bulto
+  if(!S.desde&&!S.num&&!Object.keys(S.hecho).length){const num={};let i=1;for(const l of legs)num[l.p.id]=i++;
+    for(const p of r.paradas)if(!(p.id in num))num[p.id]=i++;S.num=num;LS.set('num_'+rkey(),S.num);}
+  else if(S.num){let i=Math.max(0,...Object.values(S.num).map(Number))+1,cambia=false;for(const l of legs)if(!(l.p.id in S.num)){S.num[l.p.id]=i++;cambia=true;}
+    for(const p of r.paradas)if(!(p.id in S.num)){S.num[p.id]=i++;cambia=true;}if(cambia)LS.set('num_'+rkey(),S.num);}
+  render();
+}
+const hm2min=s=>{const m=/^(\d{1,2}):(\d{2})/.exec(s||'');return m?+m[1]*60+ +m[2]:420;};
+const min2hm=m=>{m=Math.round(m);return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');};
+const durTxt=m=>{m=Math.round(m);return m<60?m+' min':Math.floor(m/60)+' h '+String(m%60).padStart(2,'0');};
+
+/* ============ utilidades ============ */
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const eur=v=>(+v||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const rkey=()=>S.ruta?(S.ruta.fecha||'sin-fecha'):'x';
+const numDe=p=>S.num&&S.num[p.id]||'·';
+const porNum=(a,b)=>(+numDe(a)||99)-(+numDe(b)||99);
+const ICON={
+  nav:'<svg class="i" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg>',
+  phone:'<svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+  check:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>',
+  undo:'<svg class="i" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+  info:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  loc:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>',
+  map:'<svg class="i" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>',
+  search:'<svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+  chat:'<svg class="i" viewBox="0 0 24 24"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/></svg>',
+  x:'<svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+};
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600);}
+const navURL=p=>'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+(p.lat!=null?p.lat+','+p.lon:encodeURIComponent(p.dir));
+
+/* ============ vistas ============ */
+function render(){
+  const r=S.ruta,m=document.getElementById('main');
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===S.tab));
+  if(!r){m.innerHTML=`<div class="empty">${esc(SEC.vacio||'Conectando…')}${SEC.vacio?'<div class="acts" style="justify-content:center;margin-top:12px"><button class="btn" data-m="act">Actualizar</button><button class="btn" data-m="demo">Ver un ejemplo</button></div>':''}</div>`;document.getElementById('hdrSub').textContent=SEC.email||'';['pgDone','pgTot'].forEach(i=>document.getElementById(i).textContent='0');return;}
+  const tot=r.paradas.length,hechos=r.paradas.filter(p=>S.hecho[p.id]).length;
+  document.getElementById('pgDone').textContent=hechos;document.getElementById('pgTot').textContent=tot;
+  document.getElementById('pgBar').style.width=(tot?hechos/tot*100:0)+'%';
+  const tp=document.getElementById('tabPend');tp.hidden=tot-hechos===0;tp.textContent=tot-hechos;
+  const f=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}):'';
+  document.getElementById('hdrSub').textContent=[f,r.vehiculo].filter(Boolean).join(' · ')||r.nombre;
+  let h=r.ejemplo?`<div class="banner">${ICON.info}<span><b>Ruta de ejemplo.</b> Clientes y pedidos inventados para que veas cómo funciona. Tu ruta real aparece aquí cuando la nave te la envíe.</span></div>`:'';
+  if(SEC.offline&&!r.ejemplo)h+=`<div class="banner">${ICON.info}<span><b>Sin conexión.</b> Ves la última copia guardada (cifrada) en este móvil. Las entregas se envían al volver la cobertura.</span></div>`;
+  if(S.tab==='carga')h+=vCarga(r);else if(S.tab==='pedidos')h+=vPedidos(r);else h+=vRuta(r);
+  const keepMap=S.tab==='ruta'&&S.map&&document.getElementById('map');
+  if(keepMap){const mapEl=document.getElementById('map');mapEl.remove();m.innerHTML=h;const slot=document.getElementById('map');slot.replaceWith(mapEl);}
+  else{if(S.map){S.map.remove();S.map=null;}m.innerHTML=h;}
+  if(S.tab==='ruta')dibujaMapa();
+}
+
+function vCarga(r){
+  const P=r.paradas,prods={};let bultos=0;
+  for(const p of P)for(const [n,q] of p.lin){const k=n.trim();(prods[k]=prods[k]||{n:k,q:0,por:[]});prods[k].q+=q;prods[k].por.push([numDe(p),q]);bultos+=q;}
+  const L=Object.values(prods).sort((a,b)=>b.q-a.q||a.n.localeCompare(b.n,'es'));
+  const cobrar=P.reduce((s,p)=>s+p.importe,0),cargados=L.filter(x=>S.cargado[x.n]).length;
+  let h=`<div class="kpis"><div class="kpi"><small>Bultos</small><b class="num">${bultos}</b></div><div class="kpi"><small>Productos</small><b class="num">${cargados}<span>/ ${L.length}</span></b></div><div class="kpi"><small>Pedidos</small><b class="num">${eur(cobrar).replace(' €','')}<span>€</span></b></div></div>
+  <div class="seg" role="tablist"><button data-cm="prod" class="${S.cargaModo==='prod'?'on':''}">Por producto</button><button data-cm="orden" class="${S.cargaModo==='orden'?'on':''}">Orden de carga</button></div>`;
+  if(S.cargaModo==='prod'){
+    h+=`<div class="sect">Hoja de carga <small>toca cada producto al subirlo</small></div><div class="sheet">`+L.map(x=>{
+      const on=!!S.cargado[x.n];x.por.sort((a,b)=>(+a[0]||99)-(+b[0]||99));
+      return `<button class="prow${on?' on':''}" data-load="${esc(x.n)}" aria-pressed="${on}"><span class="chk">${ICON.check}</span><span style="min-width:0"><span class="pn">${esc(x.n)}</span><span class="pd">${x.por.map(([n,q])=>`<span>#${n} ×${q}</span>`).join('')}</span></span><span class="qty">${x.q}<small>uds</small></span></button>`;}).join('')+`</div>`;
+    h+=`<p class="tip">«#3 ×4» es la parada 3 de la ruta, 4 unidades. Al terminar la carga, pasa a <b>Orden de carga</b> para colocarla en la furgoneta.</p>`;
+  }else{
+    const O=[...P].sort(porNum).reverse();
+    h+=`<div class="sect">Orden de carga <small>lo primero que cargas va al fondo</small></div><div class="sheet">`+O.map((p,i)=>`<div class="lrow"><span class="n">${numDe(p)}</span><div style="min-width:0"><b>${esc(p.cli)}</b><small>${esc(p.zona||p.dir)}</small><ul>${p.lin.map(l=>`<li><b>${l[1]}</b> × ${esc(l[0])}</li>`).join('')}</ul></div><span class="pos">${i===0?'Al fondo':i===O.length-1?'En la puerta':''}</span></div>`).join('')+`</div>`;
+    h+=`<p class="tip">Va al revés que la ruta: el último cliente se carga primero y el primero queda junto a la puerta, así no hay que mover bultos en cada parada.</p>`;
+  }
+  return h;
+}
+
+function vPedidos(r){
+  const q=S.q.trim().toLowerCase();
+  let P=[...r.paradas].sort(porNum);
+  const pend=P.filter(p=>!S.hecho[p.id]),hech=P.filter(p=>S.hecho[p.id]);
+  const efectivo=hech.reduce((s,p)=>s+(S.hecho[p.id].pago==='Efectivo'?S.hecho[p.id].total:0),0);
+  const otros=hech.reduce((s,p)=>s+(['Bizum','Tarjeta'].includes(S.hecho[p.id].pago)?S.hecho[p.id].total:0),0);
+  let h=`<div class="kpis"><div class="kpi"><small>Quedan</small><b class="num">${pend.length}<span>/ ${P.length}</span></b></div><div class="kpi"><small>Efectivo</small><b class="num">${eur(efectivo).replace(' €','')}<span>€</span></b></div><div class="kpi"><small>Bizum·tarjeta</small><b class="num">${eur(otros).replace(' €','')}<span>€</span></b></div></div>
+  <div class="acts" style="margin:0"><button class="btn sm" data-cierre>${ICON.check}Cierre del día</button></div>
+  <div class="seg"><button data-pf="pend" class="${S.pedFlt==='pend'?'on':''}">Pendientes · ${pend.length}</button><button data-pf="hech" class="${S.pedFlt==='hech'?'on':''}">Entregados · ${hech.length}</button><button data-pf="todos" class="${S.pedFlt==='todos'?'on':''}">Todos</button></div>
+  <label class="search">${ICON.search}<input id="q" type="search" placeholder="Buscar cliente o calle" value="${esc(S.q)}" autocomplete="off"></label>`;
+  P=S.pedFlt==='pend'?pend:S.pedFlt==='hech'?hech:P;
+  if(q)P=P.filter(p=>(p.cli+' '+p.dir+' '+p.zona).toLowerCase().includes(q));
+  if(!P.length)return h+`<div class="empty">${S.pedFlt==='pend'&&!q?'Todo entregado. Entrega el efectivo al volver a la nave.':'Ningún pedido coincide.'}</div>`;
+  const eta={};for(const l of S.orden||[])eta[l.p.id]=l.llega;
+  return h+P.map(p=>{
+    const d=S.hecho[p.id],uds=p.lin.reduce((s,l)=>s+l[1],0);
+    let c=`<article class="card${d?' done':''}"><div class="ch"><span class="badge">${d?ICON.check:numDe(p)}</span><div style="min-width:0"><b>${esc(p.cli)}</b><small>${esc(p.dir||'Sin dirección')}</small></div>${!d&&eta[p.id]!=null?`<div class="eta"><b>${min2hm(eta[p.id])}</b><small>llegada</small></div>`:''}</div>
+      <ul class="lines">${p.lin.map(l=>`<li><span>${esc(l[0])}</span><b>× ${l[1]}</b></li>`).join('')}</ul>
+      <div class="money"><span>Pedido <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}</div>`;
+    if(p.notas)c+=`<div class="note">${esc(p.notas)}</div>`;
+    if(p.ofrece&&!d)c+=`<div class="note ofr">${ICON.info}<span><b>Ofrécele:</b> ${esc(p.ofrece)}</span></div>`;
+    if(p.tel)c+=`<div class="tel">Teléfono: <b>${esc(p.tel)}</b></div>`;
+    if(d){c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':d.pago==='A cuenta'?'Apuntado a cuenta':'Cobrado '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}</span></div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`;}
+    else{
+      c+=`<div class="acts"><a class="btn" href="${navURL(p)}" target="_blank" rel="noopener">${ICON.nav}Cómo llegar</a>${p.tel?`<a class="btn" href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}Llamar</a><a class="btn" href="${esc(waURL(p,eta[p.id]))}" target="_blank" rel="noopener">${ICON.chat}Avisar que llego</a>`:''}</div>`;
+      if(S.cobrar===p.id){
+        c+=`${p.debe>0?`<button class="tog${S.conDeuda!==false?' on':''}" data-deuda><i></i>Cobrar también lo de antes (${eur(p.debe)})</button>`:''}<label class="imp">Importe cobrado <input id="cobImp" inputmode="decimal" value="${esc(String(+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',','))}"> €</label><div class="pay">${['Efectivo','Bizum','Tarjeta','A cuenta'].map(t=>`<button data-pay="${t}" data-id="${esc(p.id)}">${t}</button>`).join('')}</div><button class="btn sm" data-cobrar="">Cancelar</button>`;
+      }else if(S.inc&&S.inc.id===p.id){
+        c+=`<div class="pay">${MOTIVOS.map(m=>`<button data-inc="${esc(m)}" class="${S.inc.motivo===m?'on':''}">${esc(m)}</button>`).join('')}</div><textarea class="incn" id="incNota" maxlength="300" placeholder="Nota para la nave (opcional): qué ha pasado, cuándo volver…">${esc(S.inc.nota||'')}</textarea><div class="acts"><button class="btn pri" data-incok="${esc(p.id)}"${S.inc.motivo?'':' disabled'}>Guardar incidencia</button><button class="btn sm" data-noent="">Cancelar</button></div>`;
+      }else c+=`<div class="acts"><button class="btn pri" data-cobrar="${esc(p.id)}">${ICON.check}Entregado</button><button class="btn" data-noent="${esc(p.id)}">${ICON.x}No entregado</button></div>`;
+    }
+    return c+'</article>';}).join('');
+}
+
+function vRuta(r){
+  const L=S.orden||[],sinLL=r.paradas.filter(p=>p.lat==null||p.lon==null);
+  const km=L.reduce((s,l)=>s+l.km,0)+(S.vueltaLeg?S.vueltaLeg.km:0),cond=L.reduce((s,l)=>s+l.min,0)+(S.vueltaLeg?S.vueltaLeg.min:0);
+  const fin=S.vueltaLeg?S.vueltaLeg.llega:L.length?L[L.length-1].llega+PARADA_MIN:null;
+  let h='';
+  if(L.length){const n=L[0].p;
+    h+=`<section class="next"><small>${S.desde?'Siguiente desde donde estás':'Primera parada'} · llegada ${min2hm(L[0].llega)}</small><b>${numDe(n)} · ${esc(n.cli)}</b><p>${esc(n.dir)} · ${L[0].km.toFixed(1)} km · ${durTxt(L[0].min)}</p>
+      <div class="acts"><a class="btn pri" href="${navURL(n)}" target="_blank" rel="noopener">${ICON.nav}Navegar</a><button class="btn" data-tab-go="pedidos">Ver pedido</button></div></section>`;}
+  else if(r.paradas.length)h+=`<div class="empty">Ruta terminada${S.vueltaLeg===null&&S.vuelta?'. Vuelve a la nave':''}.</div>`;
+  h+=`<div class="kpis"><div class="kpi"><small>Distancia</small><b class="num">${km.toFixed(1)}<span>km</span></b></div><div class="kpi"><small>Conducción</small><b class="num">${durTxt(cond)}</b></div><div class="kpi"><small>${S.vuelta?'En la nave':'Fin'}</small><b class="num">${fin!=null?min2hm(fin):'—'}</b></div></div>`;
+  h+=`<div id="map" role="img" aria-label="Mapa de la ruta"></div>`;
+  h+=`<div class="opts"><label class="tog">Salida <input id="salida" type="time" value="${esc(S.salida)}"></label><button class="tog${S.vuelta?' on':''}" data-vuelta><i></i>Volver a la nave</button><button class="tog${S.desde?' on':''}" data-desde>${ICON.loc}${S.desde?'Desde donde estoy':'Desde la nave'}</button><button class="tog${S.osrm?' on':''}" data-osrm title="Pide los tiempos reales a un servidor de OpenStreetMap: le envía las coordenadas de las paradas"><i></i>Tiempos por carretera</button></div>`;
+  // Google Maps admite 9 paradas intermedias: si hay más, la ruta va en tramos
+  if(L.length){const pts=L.map(l=>l.p),org=S.desde||r.nave,tramos=[];let o=org;
+    for(let i=0;i<pts.length;i+=9){const ch=pts.slice(i,i+9),last=i+9>=pts.length;let dest=ch[ch.length-1],way=ch.slice(0,-1);
+      if(last&&S.vuelta){dest=r.nave;way=ch;}
+      tramos.push('https://www.google.com/maps/dir/?api=1&travelmode=driving&origin='+o.lat+','+o.lon+'&destination='+dest.lat+','+dest.lon+(way.length?'&waypoints='+way.map(p=>p.lat+','+p.lon).join('%7C'):''));o=ch[ch.length-1];}
+    h+=`<div class="acts">${tramos.map((u,i)=>`<a class="btn" href="${u}" target="_blank" rel="noopener">${ICON.map}${tramos.length>1?'Tramo '+(i+1)+' en Google Maps':'Ruta completa en Google Maps'}</a>`).join('')}</div>`;}
+  h+=`<div class="sect">Orden de paradas <small>${L.length} por hacer</small></div><div class="stops">`;
+  h+=`<div class="st nave"><span class="h">${S.desde?'Ahora':esc(S.salida)}</span><span class="n">${S.desde?'●':'N'}</span><div class="t"><b>${S.desde?'Tu posición':esc(r.nave.nombre)}</b><small>Salida</small></div><span class="km"></span></div>`;
+  h+=L.map(l=>`<div class="st"><span class="h">${min2hm(l.llega)}</span><span class="n">${numDe(l.p)}</span><div class="t"><b>${esc(l.p.cli)}</b><small>${esc(l.p.zona||l.p.dir)}</small></div><span class="km">${l.km.toFixed(1)} km<br>${durTxt(l.min)}</span></div>`).join('');
+  if(S.vueltaLeg)h+=`<div class="st nave"><span class="h">${min2hm(S.vueltaLeg.llega)}</span><span class="n">N</span><div class="t"><b>Vuelta a la nave</b><small>${esc(r.nave.nombre)}</small></div><span class="km">${S.vueltaLeg.km.toFixed(1)} km<br>${durTxt(S.vueltaLeg.min)}</span></div>`;
+  const hech=[...r.paradas].filter(p=>S.hecho[p.id]).sort(porNum);
+  h+=hech.map(p=>`<div class="st done"><span class="h">${esc(S.hecho[p.id].t)}</span><span class="n">${ICON.check}</span><div class="t"><b>${esc(p.cli)}</b><small>Entregado</small></div><span class="km"></span></div>`).join('');
+  h+=`</div>`;
+  if(sinLL.length)h+=`<div class="banner">${ICON.info}<span><b>${sinLL.length} sin ubicación en el mapa:</b> ${sinLL.map(p=>esc(p.cli)).join(', ')}. Van fuera de la ruta; «Cómo llegar» usa su dirección.</span></div>`;
+  h+=`<p class="method"><b>Cómo se calcula:</b> el orden que da menos tiempo total entre todas las combinaciones posibles${r.paradas.length>14?' (aproximado: hay más de 13 paradas)':''}, ${S.vuelta?'saliendo y volviendo a la nave':'saliendo de la nave'}, con ${PARADA_MIN} min por entrega. Tiempos ${S.fuente==='carretera'?'reales por carretera (OpenStreetMap)':'estimados en el móvil (distancia × '+FACTOR_VIA+' a '+VEL_KMH+' km/h)'}.${S.osrm?' «Tiempos por carretera» envía las coordenadas de las paradas a un servidor de OpenStreetMap.':''}</p>`;
+  return h;
+}
+
+function dibujaMapa(){
+  const r=S.ruta,el=document.getElementById('map');if(!el)return;
+  if(typeof L==='undefined'){mapaSVG(el,r);return;}
+  if(!S.map){
+    S.map=L.map(el,{zoomControl:true,attributionControl:true});
+    const tl=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',referrerPolicy:'strict-origin'}).addTo(S.map);
+    let fallos=0;tl.on('tileerror',()=>{if(++fallos===4){const n=document.getElementById('mapNote');if(n)n.hidden=false;}});
+    S.layer=L.layerGroup().addTo(S.map);S.map._fit=false;
+  }
+  S.layer.clearLayers();
+  const ic=(cls,txt)=>L.divIcon({className:'',html:`<div class="mk ${cls}">${txt}</div>`,iconSize:[30,30],iconAnchor:[15,15]});
+  const pts=[];const start=S.desde||r.nave;
+  L.marker([r.nave.lat,r.nave.lon],{icon:ic('nave','N'),title:r.nave.nombre}).addTo(S.layer);
+  if(S.desde)L.marker([S.desde.lat,S.desde.lon],{icon:ic('me',''),title:'Tu posición'}).addTo(S.layer);
+  pts.push([start.lat,start.lon]);
+  for(const l of S.orden||[]){pts.push([l.p.lat,l.p.lon]);L.marker([l.p.lat,l.p.lon],{icon:ic('',numDe(l.p)),title:l.p.cli}).addTo(S.layer).bindPopup(`<b>${esc(l.p.cli)}</b><br>${esc(l.p.dir)}<br>Llegada ${min2hm(l.llega)}`);}
+  for(const p of r.paradas)if(S.hecho[p.id]&&p.lat!=null)L.marker([p.lat,p.lon],{icon:ic('done','✓'),title:p.cli}).addTo(S.layer);
+  if(S.vuelta&&pts.length>1)pts.push([r.nave.lat,r.nave.lon]);
+  if(pts.length>1){L.polyline(pts,{color:'#2a1d14',weight:7,opacity:.18}).addTo(S.layer);L.polyline(pts,{color:'#c4171d',weight:3.5,opacity:.95,dashArray:S.fuente==='carretera'?null:'8 7'}).addTo(S.layer);}
+  const all=[[r.nave.lat,r.nave.lon],...r.paradas.filter(p=>p.lat!=null).map(p=>[p.lat,p.lon])];if(S.desde)all.push([S.desde.lat,S.desde.lon]);
+  if(!S.map._fit){S.map.fitBounds(all,{padding:[28,28]});S.map._fit=true;}
+  setTimeout(()=>S.map&&S.map.invalidateSize(),60);
+  if(!document.getElementById('mapNote')){const n=document.createElement('p');n.id='mapNote';n.className='mapnote';n.hidden=true;n.textContent='Sin conexión, el mapa no muestra las calles. Las paradas y la ruta siguen en su sitio, y «Navegar» abre Google Maps.';el.after(n);}
+}
+
+// plano sin conexión (si no carga la librería del mapa): paradas y ruta a escala, sin calles
+function mapaSVG(el,r){
+  const start=S.desde||r.nave,seq=[start,...(S.orden||[]).map(l=>l.p)];if(S.vuelta&&seq.length>1)seq.push(r.nave);
+  const all=[r.nave,...r.paradas.filter(p=>p.lat!=null)];if(S.desde)all.push(S.desde);
+  const W=400,H=300,pad=30,kx=Math.cos(rad(40.3));
+  const xs=all.map(p=>p.lon*kx),ys=all.map(p=>p.lat),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  const s=Math.min((W-2*pad)/((x1-x0)||1e-3),(H-2*pad)/((y1-y0)||1e-3)),ox=(W-(x1-x0)*s)/2,oy=(H-(y1-y0)*s)/2;
+  const X=p=>(ox+(p.lon*kx-x0)*s).toFixed(1),Y=p=>(H-oy-(p.lat-y0)*s).toFixed(1);
+  const km5=5/111*s;  // 5 km en píxeles (en latitud)
+  let g=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">`;
+  if(seq.length>1)g+=`<polyline points="${seq.map(p=>X(p)+','+Y(p)).join(' ')}" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="7 6" stroke-linejoin="round"/>`;
+  for(const p of r.paradas)if(p.lat!=null){const d=S.hecho[p.id];g+=`<circle cx="${X(p)}" cy="${Y(p)}" r="11" fill="${d?'var(--ok)':'var(--red)'}" stroke="var(--card)" stroke-width="2.5"/><text x="${X(p)}" y="${(+Y(p)+4).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff" font-family="var(--font)">${d?'✓':numDe(p)}</text>`;}
+  g+=`<rect x="${X(r.nave)-12}" y="${Y(r.nave)-12}" width="24" height="24" rx="7" fill="var(--brown)" stroke="var(--card)" stroke-width="2.5"/><text x="${X(r.nave)}" y="${(+Y(r.nave)+4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="var(--font)">N</text>`;
+  if(S.desde)g+=`<circle cx="${X(S.desde)}" cy="${Y(S.desde)}" r="8" fill="#1f6feb" stroke="var(--card)" stroke-width="3"/>`;
+  g+=`<g transform="translate(14 ${H-16})"><line x1="0" y1="0" x2="${km5.toFixed(1)}" y2="0" stroke="var(--muted)" stroke-width="2"/><line x1="0" y1="-4" x2="0" y2="4" stroke="var(--muted)" stroke-width="2"/><line x1="${km5.toFixed(1)}" y1="-4" x2="${km5.toFixed(1)}" y2="4" stroke="var(--muted)" stroke-width="2"/><text x="${(km5/2).toFixed(1)}" y="-7" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)" font-family="var(--font)">5 km</text></g>`;
+  el.innerHTML=g+'</svg>';el.style.height='auto';el.style.aspectRatio='4/3';
+  if(!document.getElementById('mapNote')){const n=document.createElement('p');n.id='mapNote';n.className='mapnote';n.textContent='Plano sin calles (sin conexión). «Navegar» abre Google Maps con la dirección.';el.after(n);}
+}
+
+/* ============ acciones ============ */
+function guarda(){guardaLocal();}
+document.addEventListener('click',ev=>{
+  const t=ev.target.closest('button,[data-tab-go]');if(!t)return;
+  if(t.dataset.tab){S.tab=t.dataset.tab;LS.set('tab',S.tab);if(S.map){S.map.remove();S.map=null;}render();window.scrollTo(0,0);return;}
+  if(t.dataset.tabGo){S.tab=t.dataset.tabGo;S.pedFlt='pend';if(S.map){S.map.remove();S.map=null;}render();window.scrollTo(0,0);return;}
+  if(t.dataset.cm){S.cargaModo=t.dataset.cm;LS.set('cargaModo',S.cargaModo);render();return;}
+  if(t.dataset.load!=null){const k=t.dataset.load;S.cargado[k]=!S.cargado[k];if(!S.cargado[k])delete S.cargado[k];guarda();render();return;}
+  if(t.dataset.pf){S.pedFlt=t.dataset.pf;render();return;}
+  if(t.dataset.cobrar!=null){S.cobrar=t.dataset.cobrar||null;S.inc=null;S.conDeuda=true;render();return;}
+  if(t.dataset.noent!=null){S.inc=t.dataset.noent?{id:t.dataset.noent,motivo:'',nota:''}:null;S.cobrar=null;render();return;}
+  if(t.dataset.inc!=null&&S.inc){const n=document.getElementById('incNota');if(n)S.inc.nota=n.value;S.inc.motivo=t.dataset.inc;render();return;}
+  if(t.dataset.incok){const p=S.ruta.paradas.find(x=>x.id===t.dataset.incok);if(!p||!S.inc||!S.inc.motivo)return;const n=document.getElementById('incNota'),now=new Date();
+    S.hecho[p.id]={inc:S.inc.motivo,nota:String(n?n.value:S.inc.nota||'').trim().slice(0,300),pago:'—',total:0,t:min2hm(now.getHours()*60+now.getMinutes())};S.inc=null;guarda();
+    toast(`${p.cli}: no entregado (${S.hecho[p.id].inc.toLowerCase()})`);subeEntrega(p,true);calcula();return;}
+  if(t.hasAttribute('data-cierre')){abreCierre();return;}
+  if(t.hasAttribute('data-deuda')){S.conDeuda=S.conDeuda===false;render();return;}
+  if(t.dataset.pay){const p=S.ruta.paradas.find(x=>x.id===t.dataset.id);if(!p)return;const met=t.dataset.pay,now=new Date();
+    const inp=document.getElementById('cobImp'),v=inp?parseFloat(String(inp.value).replace(/\s/g,'').replace(',','.')):NaN,total=met==='A cuenta'?0:+(isFinite(v)&&v>=0?v:p.importe).toFixed(2);
+    S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes())};S.cobrar=null;guarda();subeEntrega(p,true);
+    toast(met==='A cuenta'?`${p.cli}: apuntado a cuenta`:`${p.cli}: cobrado ${eur(total)} en ${met.toLowerCase()}`);calcula();return;}
+  if(t.dataset.undo){const p=S.ruta.paradas.find(x=>x.id===t.dataset.undo);delete S.hecho[t.dataset.undo];guarda();if(p)subeEntrega(p,false);calcula();return;}
+  if(t.hasAttribute('data-vuelta')){S.vuelta=!S.vuelta;LS.set('vuelta',S.vuelta);calcula();return;}
+  if(t.hasAttribute('data-osrm')){S.osrm=!S.osrm;LS.set('osrm',S.osrm);calcula();return;}
+  if(t.hasAttribute('data-desde')){
+    if(S.desde){S.desde=null;calcula();return;}
+    if(!navigator.geolocation){toast('Este móvil no da la ubicación');return;}
+    toast('Buscando tu posición…');
+    navigator.geolocation.getCurrentPosition(pos=>{S.desde={lat:pos.coords.latitude,lon:pos.coords.longitude,nombre:'Tu posición'};if(S.map)S.map._fit=false;calcula();},
+      ()=>toast('No se pudo leer la ubicación. Revisa el permiso del navegador.'),{enableHighAccuracy:true,timeout:10000});return;}
+  if(t.id==='btnImport'){abreMenu();return;}
+  if(t.dataset.m){accionMenu(t.dataset.m,t.dataset.v);return;}
+});
+document.addEventListener('input',ev=>{if(ev.target.id==='q'){S.q=ev.target.value;const pos=ev.target.selectionStart;render();const q=document.getElementById('q');if(q){q.focus();try{q.setSelectionRange(pos,pos);}catch(e){}}}});
+document.addEventListener('change',ev=>{if(ev.target.id==='salida'){S.salida=ev.target.value||'07:00';LS.set('salida',S.salida);calcula();}});
+
+/* ============ conexión segura: Supabase (login por código) + cifrado de extremo a extremo ============ */
+// La ruta llega cifrada con AES-256-GCM desde Gato Control. Supabase solo guarda texto cifrado; la clave de reparto
+// solo la tienen Gato Control y este móvil (guardada como clave no exportable en IndexedDB). En esta app no hay datos de clientes.
+const SB={url:'https://gwfxslcakxwydsnkdjct.supabase.co',key:'sb_publishable_OkrCjinzGfp4EaV41auHhQ_XAPw8tTa'};
+const SEC={email:'',key:null,rutas:[],rutaId:null,dia:null,offline:false,vacio:'',creado:''};
+const TE=new TextEncoder(),TD=new TextDecoder();
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const normClave=s=>String(s||'').toUpperCase().replace(/[^A-Z2-7]/g,'');
+const hoyISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);};
+const okEmail=e=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);
+
+/* sesión (tokens de Supabase Auth) */
+const SES={get(){return LS.get('ses',null);},set(v){LS.set('ses',v);},clear(){try{localStorage.removeItem('gr_ses');}catch(e){}}};
+function authErr(j,st){const m=String(j.msg||j.error_description||j.message||j.error||'');
+  if(/autorizado|Database error/i.test(m))return 'Este email no está autorizado. Pide en la nave que te den de alta.';
+  if(st===429||/rate limit|security purposes|seconds/i.test(m))return 'Demasiados intentos seguidos. Espera unos minutos y vuelve a intentarlo.';
+  if(/invalid login|credentials|invalid_grant|banned/i.test(m+' '+(j.error_code||'')))return 'El email o la clave no son correctos, o tu acceso está desactivado. Revísalo con la nave.';
+  return m||('Error '+st);}
+function conTiempo(ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return {signal:c.signal,fin:()=>clearTimeout(t)};}
+async function sbAuth(path,body){
+  const w=conTiempo(15000);let r;try{r=await fetch(SB.url+'/auth/v1/'+path,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key},body:JSON.stringify(body),signal:w.signal});}catch(e){throw new TypeError('sin conexión');}finally{w.fin();}
+  const t=await r.text();let j={};try{j=t?JSON.parse(t):{};}catch(e){}
+  if(!r.ok)throw new Error(authErr(j,r.status));return j;}
+function guardaSes(j){const s={at:j.access_token,rt:j.refresh_token,exp:Date.now()+(+j.expires_in||3600)*1000,email:String(j.user&&j.user.email||SEC.email||'').toLowerCase()};SES.set(s);return s;}
+async function token(){
+  let s=SES.get();if(!s)return null;if(Date.now()<s.exp-60000)return s.at;
+  try{s=guardaSes(await sbAuth('token?grant_type=refresh_token',{refresh_token:s.rt}));return s.at;}
+  catch(e){if(e instanceof TypeError)throw new Error('offline');SES.clear();return null;}}
+async function sbRest(path,opt){
+  const at=await token();if(!at)throw new Error('sesion');
+  const w=conTiempo(15000);let r;try{r=await fetch(SB.url+'/rest/v1/'+path,Object.assign({},opt,{signal:w.signal,headers:Object.assign({apikey:SB.key,Authorization:'Bearer '+at,'Content-Type':'application/json'},opt&&opt.headers)}));}catch(e){throw new Error('offline');}finally{w.fin();}
+  if(r.status===401){SES.clear();throw new Error('sesion');}
+  if(!r.ok)throw new Error('Error '+r.status);const t=await r.text();return t?JSON.parse(t):null;}
+
+/* clave de reparto: PBKDF2-SHA256 (210.000 vueltas) → AES-256-GCM, guardada no exportable */
+const IDB={db:null,
+  async open(){if(this.db)return this.db;this.db=await new Promise((ok,ko)=>{const r=indexedDB.open('gato-reparto',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error);});return this.db;},
+  async op(mode,fn){const db=await this.open();return new Promise((ok,ko)=>{const tx=db.transaction('k',mode),rq=fn(tx.objectStore('k'));tx.oncomplete=()=>ok(rq.result);tx.onerror=()=>ko(tx.error);});},
+  get(k){return this.op('readonly',s=>s.get(k));},set(k,v){return this.op('readwrite',s=>s.put(v,k));},clear(){return this.op('readwrite',s=>s.clear());}};
+async function deriva(clave,email){
+  const base=await crypto.subtle.importKey('raw',TE.encode(normClave(clave)),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:TE.encode('gato-reparto|'+email.toLowerCase()),iterations:210000},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+const b64e=u=>{let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);};
+// cobro o incidencia de una parada: cifrado con la misma clave; solo Gato Control lo puede leer
+async function cifraDato(obj,pid){const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:TE.encode(SEC.dia+'|'+SEC.email+'|'+pid)},SEC.key,TE.encode(JSON.stringify(obj))));
+  return {v:1,alg:'AES-256-GCM',iv:b64e(iv),ct:b64e(ct)};}
+async function descifraDato(d,pid){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(d.iv),additionalData:TE.encode(SEC.dia+'|'+SEC.email+'|'+pid)},SEC.key,b64d(d.ct));return JSON.parse(TD.decode(pt));}
+// estado local del día (cobros, notas, productos cargados): cifrado con la clave; sin ella no se lee nada de este móvil
+let guardaT=null;
+async function guardaE(k,obj){if(!SEC.key)return;const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:TE.encode('local|'+SEC.email+'|'+k)},SEC.key,TE.encode(JSON.stringify(obj))));
+  LS.set('e_'+k,{iv:b64e(iv),ct:b64e(ct)});}
+async function leeE(k){const d=LS.get('e_'+k,null);if(!d||!SEC.key)return null;
+  try{return JSON.parse(TD.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(d.iv),additionalData:TE.encode('local|'+SEC.email+'|'+k)},SEC.key,b64d(d.ct))));}catch(e){return null;}}
+function guardaLocal(){clearTimeout(guardaT);guardaT=setTimeout(()=>{guardaE('hecho_'+rkey(),S.hecho);guardaE('cargado_'+rkey(),S.cargado);},150);}
+// limpieza: versiones anteriores guardaban esto en claro
+try{for(const k of Object.keys(localStorage))if(/^gr_(hecho|cargado|ruta)/.test(k))localStorage.removeItem(k);}catch(e){}
+async function descifra(key,payload,fecha,email){
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(payload.iv),additionalData:TE.encode(fecha+'|'+email.toLowerCase())},key,b64d(payload.ct));
+  return JSON.parse(TD.decode(pt));}
+
+/* pantallas de entrada */
+const LOGO=document.querySelector('header svg.logo').outerHTML;
+const CANDADO='<svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function gate(html){const g=document.getElementById('gate');g.hidden=false;g.innerHTML=`<div class="gc">${LOGO}${html}</div>`;const i=g.querySelector('input');if(i)setTimeout(()=>i.focus(),50);}
+function sinGate(){const g=document.getElementById('gate');g.hidden=true;g.innerHTML='';}
+// la contraseña de entrada se saca de la clave con otra sal: el servidor la comprueba pero no puede sacar de ella la llave de cifrado
+async function acceso(clave,email){
+  const base=await crypto.subtle.importKey('raw',TE.encode(normClave(clave)),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:TE.encode('gato-reparto-login|'+email.toLowerCase()),iterations:210000},base,256);
+  return [...new Uint8Array(bits)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function pantallaLogin(err,email){
+  gate(`<h1>Gato <em>Reparto</em></h1><p>Entra con tu email y la <b>clave de reparto</b> que te han dado en la nave. Solo se pide una vez en este móvil.</p>
+    <label>Tu email<input id="gMail" type="email" inputmode="email" autocomplete="username" value="${esc(email||'')}" placeholder="nombre@gmail.com"></label>
+    <label>Clave de reparto<input id="gKey" class="key" type="password" autocomplete="current-password" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX"></label>
+    ${err?`<div class="err">${esc(err)}</div>`:''}<button class="btn pri" id="gOk">Entrar</button>
+    <div class="lock">${CANDADO}<span>Las rutas viajan cifradas de extremo a extremo (AES-256): ni el servidor puede leer los datos de los clientes. La clave se guarda en este móvil sin que se pueda volver a leer.</span></div>`);
+  const go=async()=>{const e=document.getElementById('gMail').value.trim().toLowerCase(),v=normClave(document.getElementById('gKey').value);
+    if(!okEmail(e))return pantallaLogin('Escribe un email válido.',e);
+    if(v.length!==20)return pantallaLogin('La clave tiene 20 letras y números (puedes escribirla con o sin guiones).',e);
+    const btn=document.getElementById('gOk');btn.disabled=true;btn.textContent='Comprobando…';
+    try{const j=await sbAuth('token?grant_type=password',{email:e,password:await acceso(v,e)});SEC.email=e;guardaSes(j);LS.set('desde',Date.now());
+      const k=await deriva(v,e);await IDB.set('k:'+e,k);SEC.key=k;arranca();}
+    catch(x){pantallaLogin(x instanceof TypeError?'Sin conexión. Inténtalo con cobertura.':x.message,e);}};
+  document.getElementById('gOk').onclick=go;
+  for(const id of ['gMail','gKey'])document.getElementById(id).onkeydown=ev=>{if(ev.key==='Enter')go();};
+}
+const pantallaClave=err=>{SES.clear();pantallaLogin(err||'',SEC.email);};
+async function salir(){
+  try{const at=SES.get();if(at&&navigator.onLine!==false)await fetch(SB.url+'/auth/v1/logout',{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+at.at}});}catch(e){}
+  try{Object.keys(localStorage).filter(k=>k.startsWith('gr_')).forEach(k=>localStorage.removeItem(k));}catch(e){}
+  try{await IDB.clear();}catch(e){}
+  try{const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}
+  SEC.email='';SEC.key=null;SEC.rutas=[];SEC.rutaId=null;S.ruta=null;cierraImport();pantallaLogin('');
+}
+
+/* rutas del repartidor */
+async function arranca(){
+  const s=SES.get();if(!s)return pantallaLogin('');
+  // cada 30 días hay que volver a entrar con la clave: un móvil olvidado no conserva el acceso indefinidamente
+  if(Date.now()-(+LS.get('desde',0)||0)>30*864e5){await salir();return pantallaLogin('Han pasado 30 días: vuelve a entrar con tu email y tu clave.',s.email);}
+  SEC.email=s.email;try{SEC.key=await IDB.get('k:'+s.email);}catch(e){SEC.key=null;}
+  if(!SEC.key)return pantallaClave('');
+  if(!(SEC.key.usages||[]).includes('encrypt'))return pantallaClave('Vuelve a entrar una vez con tu clave para activar el envío cifrado de cobros e incidencias.');
+  sinGate();await cargaRutas();
+}
+async function cargaRutas(){
+  try{SEC.rutas=await sbRest('rep_rutas?select=id,fecha,payload,n_paradas,creado&order=fecha.asc')||[];SEC.offline=false;LS.set('cache',SEC.rutas);}
+  catch(e){if(e.message==='sesion')return pantallaLogin('Tu sesión ha caducado o te han cambiado la clave. Vuelve a entrar.',SEC.email);SEC.rutas=LS.get('cache',[]);SEC.offline=true;}
+  const hoy=hoyISO(),R=SEC.rutas;
+  const r=R.find(x=>x.fecha===SEC.dia)||R.find(x=>x.fecha===hoy)||R.find(x=>x.fecha>hoy)||R[R.length-1];
+  if(!r){if(!S.ruta||!S.ruta.ejemplo){S.ruta=null;SEC.rutaId=null;SEC.vacio='Todavía no tienes ninguna ruta. Aparecerá aquí sola cuando la nave te la envíe.';render();}return;}
+  if(SEC.rutaId===r.id&&SEC.creado===r.creado&&S.ruta&&!S.ruta.ejemplo){await sincroniza();return;}
+  await abre(r);
+}
+async function abre(rr){
+  let r;try{r=await descifra(SEC.key,rr.payload,rr.fecha,SEC.email);}
+  catch(e){try{await IDB.clear();}catch(x){}SEC.key=null;return pantallaClave('La clave guardada no abre la ruta del '+rr.fecha+'. Puede que en la nave te la hayan cambiado: entra con la nueva.');}
+  r.fecha=rr.fecha;r.ejemplo=false;let ruta;try{ruta=sanea(r);}catch(e){SEC.vacio='La ruta del '+rr.fecha+' no tiene paradas.';S.ruta=null;render();return;}
+  SEC.rutaId=rr.id;SEC.dia=rr.fecha;SEC.creado=rr.creado;await ponRuta(ruta);await sincroniza();
+}
+// entregas: solo un identificador opaco de la parada viaja al servidor (sin datos del cliente)
+async function subeEntrega(p,on){
+  if(!SEC.rutaId||!S.ruta||S.ruta.ejemplo||!/^[0-9a-f]{16}$/.test(p.pid||''))return;const k='pdel_'+SEC.rutaId,del=new Set(LS.get(k,[]));
+  try{
+    if(on){const h=S.hecho[p.id]||{},dato=await cifraDato({pago:h.pago||'',total:+h.total||0,inc:h.inc||'',nota:h.nota||'',t:h.t||''},p.pid);
+      await sbRest('rep_entregas?on_conflict=ruta_id,pid',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({ruta_id:SEC.rutaId,pid:p.pid,estado:h.inc?'incidencia':'entregado',dato,at:new Date().toISOString()})});
+      del.delete(p.pid);if(S.hecho[p.id])S.hecho[p.id].sync=true;}
+    else{await sbRest('rep_entregas?ruta_id=eq.'+SEC.rutaId+'&pid=eq.'+p.pid,{method:'DELETE'});del.delete(p.pid);}
+  }catch(e){if(!on)del.add(p.pid);}
+  LS.set(k,[...del]);guarda();
+}
+async function sincroniza(){
+  if(!SEC.rutaId||!S.ruta||S.ruta.ejemplo||navigator.onLine===false)return;
+  for(const pid of LS.get('pdel_'+SEC.rutaId,[])){const p=S.ruta.paradas.find(x=>x.pid===pid);if(p&&!S.hecho[p.id])await subeEntrega(p,false);}
+  for(const p of S.ruta.paradas){const h=S.hecho[p.id];if(h&&!h.sync&&!h.remoto)await subeEntrega(p,true);}
+  try{const E=await sbRest('rep_entregas?select=pid,at,estado,dato&ruta_id=eq.'+SEC.rutaId)||[],on=new Set(E.map(e=>e.pid));let cambia=false;
+    for(const e of E){const p=S.ruta.paradas.find(x=>x.pid===e.pid);if(p&&!S.hecho[p.id]){const d=new Date(e.at);let x={};try{if(e.dato)x=await descifraDato(e.dato,p.pid);}catch(er){}
+      S.hecho[p.id]={pago:x.pago||'—',total:+x.total||0,inc:x.inc||(e.estado==='incidencia'?'Incidencia':''),nota:x.nota||'',t:x.t||min2hm(d.getHours()*60+d.getMinutes()),remoto:true,sync:true};cambia=true;}}
+    for(const p of S.ruta.paradas){const h=S.hecho[p.id];if(h&&h.remoto&&!on.has(p.pid)){delete S.hecho[p.id];cambia=true;}}
+    if(cambia){guarda();calcula();}}catch(e){}
+}
+
+const MOTIVOS=['No estaba','Cerrado','Rechaza el pedido','Entrega parcial','Otro'];
+// WhatsApp al cliente: «llego en unos X min»
+function waURL(p,llega){const t=String(p.tel||'').replace(/\D/g,''),n=t.length===9?'34'+t:t,now=new Date(),m=llega!=null?Math.max(5,Math.round((llega-(now.getHours()*60+now.getMinutes()))/5)*5):15;
+  return 'https://wa.me/'+n+'?text='+encodeURIComponent(`Hola, soy el repartidor de El Gato con Bolsas. Llego en unos ${m} minutos con vuestro pedido.`);}
+/* cierre del día: lo cobrado por forma de pago, lo apuntado a cuenta, incidencias y lo que queda */
+function textoCierre(){const r=S.ruta,P=[...r.paradas].sort(porNum),f=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}):'';
+  const tot={Efectivo:0,Bizum:0,Tarjeta:0},cta=[],inc=[],pend=[];
+  for(const p of P){const h=S.hecho[p.id];if(!h){pend.push(p);continue;}if(h.inc)inc.push([p,h]);else if(h.pago==='A cuenta')cta.push(p);else if(tot[h.pago]!=null)tot[h.pago]+=+h.total||0;}
+  return {f,P,tot,cta,inc,pend};}
+function abreCierre(){
+  const C=textoCierre(),sh=document.getElementById('sheet');sh.hidden=false;sh.className='sheetbg';const ent=C.P.length-C.pend.length-C.inc.length;
+  sh.innerHTML=`<div class="panel pad" role="dialog" aria-modal="true" aria-labelledby="cT"><h2 id="cT">Cierre del día</h2><p>${esc(C.f)} · ${ent} entregados de ${C.P.length}${C.inc.length?' · '+C.inc.length+' sin entregar':''}${C.pend.length?' · '+C.pend.length+' pendientes':''}</p>
+    <div class="cierre"><div><small>Efectivo a entregar</small><b class="num">${eur(C.tot.Efectivo)}</b></div><div><small>Bizum</small><b class="num">${eur(C.tot.Bizum)}</b></div><div><small>Tarjeta</small><b class="num">${eur(C.tot.Tarjeta)}</b></div><div><small>A cuenta</small><b class="num">${C.cta.length}</b></div></div>
+    ${C.inc.length?`<div class="sect">No entregados</div><ul class="clist">${C.inc.map(([p,h])=>`<li><span><b>${numDe(p)}. ${esc(p.cli)}</b>${h.nota?'<br><small>'+esc(h.nota)+'</small>':''}</span><span>${esc(h.inc)}</span></li>`).join('')}</ul>`:''}
+    ${C.pend.length?`<div class="sect">Sin hacer</div><ul class="clist">${C.pend.map(p=>`<li><span>${numDe(p)}. ${esc(p.cli)}</span><span>${eur(p.importe)}</span></li>`).join('')}</ul>`:''}
+    <div class="acts"><button class="btn pri" data-m="copiaCierre">${ICON.check}Copiar resumen</button><button class="btn" data-m="x">Cerrar</button></div>
+    <p class="tip">Los cobros y las incidencias ya han llegado cifrados a la nave${S.ruta.ejemplo?' (en la ruta de ejemplo no se envía nada)':''}. Entrega el efectivo al volver.</p></div>`;
+  sh.onclick=e=>{if(e.target===sh)cierraImport();};}
+
+/* menú */
+function abreMenu(){
+  const sh=document.getElementById('sheet');sh.hidden=false;sh.className='sheetbg';
+  const R=SEC.rutas,f=d=>new Date(d+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
+  sh.innerHTML=`<div class="panel pad" role="dialog" aria-modal="true" aria-labelledby="mT"><h2 id="mT">Gato Reparto</h2>
+    <p>${SEC.email?`Has entrado como <b>${esc(SEC.email)}</b>.`:''}${SEC.offline?' Sin conexión: ves la última copia guardada.':''}</p>
+    ${R.length?`<div class="sect">Tus rutas</div><div class="mrow">${R.map(x=>`<button class="btn sm${x.id===SEC.rutaId&&S.ruta&&!S.ruta.ejemplo?' on':''}" data-m="dia" data-v="${esc(x.fecha)}">${esc(f(x.fecha))} · ${+x.n_paradas||0} par.</button>`).join('')}</div>`:'<p>No tienes rutas enviadas desde la nave.</p>'}
+    <div class="acts"><button class="btn pri" data-m="act">Actualizar</button><button class="btn" data-m="demo">Ruta de ejemplo</button><button class="btn" data-m="x">Cerrar</button></div>
+    <div class="acts"><button class="btn sm" data-m="clave">Me han dado otra clave</button><button class="btn sm" data-m="salir">Cerrar sesión y borrar datos</button></div>
+    <p class="tip">Las rutas llegan cifradas (AES-256) y se borran del servidor a los 7 días. «Cerrar sesión» borra también todo lo guardado en este móvil.</p></div>`;
+  sh.onclick=e=>{if(e.target===sh)cierraImport();};
+}
+async function accionMenu(a,v){
+  if(a==='x'){cierraImport();return;}
+  if(a==='dia'){cierraImport();SEC.dia=v;const r=SEC.rutas.find(x=>x.fecha===v);if(r)await abre(r);return;}
+  if(a==='act'){cierraImport();toast('Buscando rutas…');await cargaRutas();return;}
+  if(a==='demo'){cierraImport();SEC.rutaId=null;await ponRuta(sanea(DEMO));toast('Ruta de ejemplo (datos inventados)');return;}
+  if(a==='clave'){cierraImport();try{await IDB.clear();}catch(e){}SEC.key=null;pantallaClave('Escribe tu clave nueva.');return;}
+  if(a==='salir'){salir();return;}
+  if(a==='copiaCierre'){const C=textoCierre(),txt=`CIERRE · ${C.f}\nEfectivo: ${eur(C.tot.Efectivo)} · Bizum: ${eur(C.tot.Bizum)} · Tarjeta: ${eur(C.tot.Tarjeta)} · A cuenta: ${C.cta.length}\n`+(C.inc.length?'No entregados:\n'+C.inc.map(([p,h])=>`  ${numDe(p)}. ${p.cli}: ${h.inc}${h.nota?' ('+h.nota+')':''}`).join('\n')+'\n':'')+(C.pend.length?'Sin hacer: '+C.pend.map(p=>p.cli).join(', '):'');
+    try{await navigator.clipboard.writeText(txt);toast('Resumen copiado');}catch(e){toast('No se ha podido copiar');}return;}
+}
+function cierraImport(){const sh=document.getElementById('sheet');sh.hidden=true;sh.innerHTML='';}
+async function ponRuta(r){
+  S.ruta=r;S.hecho=(await leeE('hecho_'+rkey()))||{};S.cargado=(await leeE('cargado_'+rkey()))||{};S.num=LS.get('num_'+rkey(),null);S.desde=null;S.orden=null;
+  if(S.map){S.map.remove();S.map=null;}calcula();
+}
+
+/* ============ arranque ============ */
+S.salida=LS.get('salida','07:00');S.vuelta=LS.get('vuelta',true);S.osrm=LS.get('osrm',false);
+try{localStorage.removeItem('gr_ruta');}catch(e){}   // versión anterior: guardaba la ruta sin cifrar
+render();arranca();
+document.addEventListener('visibilitychange',()=>{const p=document.getElementById('priv');if(p)p.hidden=document.visibilityState==='visible';});
+if(window.top!==window.self&&/github\.io$/.test(location.hostname)){document.documentElement.innerHTML='';try{window.top.location=location.href;}catch(e){}}
+window.addEventListener('online',()=>{calcula();if(SEC.key)cargaRutas();});
+// rutas nuevas o cambiadas desde la nave: se miran cada 2 minutos con la app abierta
+setInterval(()=>{if(document.visibilityState==='visible'&&SEC.key&&navigator.onLine!==false)cargaRutas();},120000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&SEC.key)cargaRutas();});
+// pantalla encendida mientras se reparte (si el móvil lo permite)
+async function wake(){try{if('wakeLock' in navigator&&document.visibilityState==='visible')await navigator.wakeLock.request('screen');}catch(e){}}
+document.addEventListener('visibilitychange',wake);wake();
+// app instalable y sin conexión
+if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}}
+
+</script>
+
+</body></html>
