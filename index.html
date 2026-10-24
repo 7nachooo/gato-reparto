@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 
 .leaflet-pane,
@@ -812,6 +812,9 @@ main{display:flex;flex-direction:column;gap:16px;padding-block:16px calc(var(--t
 .prb-f{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
 .prb-f img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
 .prb-f small{flex:1 1 160px;color:var(--muted);font-size:12px;line-height:1.35}
+button,.btn,a.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn,.pay button,.prow,.seg button,.tabs button,.tog{transition:transform .12s cubic-bezier(.2,.8,.2,1),background-color .15s ease,box-shadow .15s ease}
+.btn:active:not(:disabled),.pay button:active,.prow:active,.seg button:active,.tog:active{transform:scale(.97)}
 .pay button.on{background:var(--red);color:var(--on-red);box-shadow:none}
 .btn:disabled{opacity:.45;cursor:not-allowed}\n.imp{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--ink-2);margin:4px 0 8px}.imp input{flex:1;min-width:0;max-width:140px;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:800 16px var(--font);padding:0 10px;text-align:right}\n.note.ofr{display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);color:var(--ink)}.note.ofr .i{flex:none;margin-top:1px;color:var(--ok)}.note.ofr b{color:var(--ok)}
 .incn{width:100%;min-height:64px;box-sizing:border-box;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:14px var(--font);padding:10px;margin-top:8px}
@@ -929,7 +932,7 @@ main{display:flex;flex-direction:column;gap:16px;padding-block:16px calc(var(--t
 <div id="priv" class="priv" hidden aria-hidden="true"><svg class="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#c4171d"/><path d="M17 24h30l-3 30H20z" fill="#fff8ef"/><path d="M24 26v-6a8 8 0 0 1 16 0v6" fill="none" stroke="#fff8ef" stroke-width="4" stroke-linecap="round"/></svg></div>
 <div id="toast" class="toast" hidden></div>
 
-<script src="leaflet.js"></script>
+<script src="leaflet.js" async onload="try{if(S.ruta&&S.tab==='ruta')render();}catch(e){}"></script>
 <script>
 "use strict";
 /* ============ datos ============ */
