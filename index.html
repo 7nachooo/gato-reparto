@@ -718,7 +718,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 /* barra superior */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;color:#fff;background:linear-gradient(100deg,var(--brown),var(--brown-2));box-shadow:0 6px 18px rgba(30,18,10,.25)}
 .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--coral),rgba(255,95,87,0) 70%)}
-.top-in{display:flex;align-items:center;gap:12px;padding-block:10px}
+.top-in{display:flex;align-items:center;gap:12px;padding-block:10px;max-width:760px;margin:0 auto;box-sizing:border-box}
 .logo{width:38px;height:38px;flex:none}
 .tt{min-width:0;flex:1}
 .tt b{display:block;font:400 18px/1 var(--brand);text-transform:uppercase;letter-spacing:.01em}
@@ -726,7 +726,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 .tt small{display:block;font-size:12px;color:var(--cuero-suave);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbtn{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);flex:none}
 .topbtn:hover{background:rgba(255,255,255,.16)}
-.prog{display:flex;align-items:center;gap:10px;padding-block:0 10px;font-size:12px;color:#eee4d7}
+.prog{display:flex;align-items:center;gap:10px;padding-block:0 10px;max-width:760px;margin:0 auto;box-sizing:border-box;font-size:12px;color:#eee4d7}
 .prog i{flex:1;height:4px;border-radius:4px;background:rgba(255,248,239,.15);overflow:hidden}
 .prog u{display:block;height:100%;background:var(--coral);border-radius:4px;transition:width .4s}
 .prog b{color:#fff;font-weight:800}
@@ -808,7 +808,7 @@ main{display:flex;flex-direction:column;gap:16px;padding-block:16px calc(var(--t
 .prb{margin:10px 0;padding:10px;border:1px dashed var(--line);border-radius:12px;background:var(--field)}
 .prb-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-size:13px}
 .prb-h small{color:var(--muted);font-size:12px;font-weight:600}
-.pad{display:block;box-sizing:border-box;width:100%;height:150px;background:#fffdf8;border:1px solid var(--line);border-radius:10px;touch-action:none;cursor:crosshair}
+.firmapad{display:block;box-sizing:border-box;width:100%;height:150px;background:#fffdf8;border:1px solid var(--line);border-radius:10px;touch-action:none;cursor:crosshair}
 .prb-f{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
 .prb-f img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
 .prb-f small{flex:1 1 160px;color:var(--muted);font-size:12px;line-height:1.35}
@@ -1372,7 +1372,7 @@ async function abre(rr){
 function bloquePrueba(p){
   if(!S.prueba||S.prueba.id!==p.id)S.prueba={id:p.id,trazos:[],foto:''};const q=S.prueba;
   return `<div class="prb"><div class="prb-h"><b>Firma del cliente</b><small>${q.trazos.length?'':'firma con el dedo'}</small><button class="btn sm" data-prb="borra"${q.trazos.length?'':' disabled'}>Borrar</button></div>
-  <canvas id="firmaPad" class="pad" aria-label="Recuadro para la firma del cliente"></canvas>
+  <canvas id="firmaPad" class="firmapad" aria-label="Recuadro para la firma del cliente"></canvas>
   <div class="prb-f">${q.foto?`<img src="${q.foto}" alt="Foto de la entrega">`:''}<label class="btn sm">${ICON.cam}${q.foto?'Repetir foto':'Foto de la entrega'}<input type="file" accept="image/*" capture="environment" id="prbFoto" hidden></label><small>${q.foto?'Foto lista.':'Opcional: la mercancía en su sitio, sin personas ni documentos.'}</small></div></div>`;}
 function pintaFirma(){
   const c=document.getElementById('firmaPad');if(!c||!S.prueba)return;const q=S.prueba,dpr=Math.min(3,window.devicePixelRatio||1),W=c.clientWidth||300,H=c.clientHeight||150;
