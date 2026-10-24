@@ -804,6 +804,14 @@ main{display:flex;flex-direction:column;gap:16px;padding-block:16px calc(var(--t
 .pay{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .pay button{min-height:42px;border-radius:10px;font-weight:800;font-size:13px;background:var(--field);box-shadow:inset 0 0 0 1px var(--line)}
 .pay button:hover{box-shadow:inset 0 0 0 2px var(--red-2)}
+
+.prb{margin:10px 0;padding:10px;border:1px dashed var(--line);border-radius:12px;background:var(--field)}
+.prb-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-size:13px}
+.prb-h small{color:var(--muted);font-size:12px;font-weight:600}
+.pad{display:block;box-sizing:border-box;width:100%;height:150px;background:#fffdf8;border:1px solid var(--line);border-radius:10px;touch-action:none;cursor:crosshair}
+.prb-f{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.prb-f img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.prb-f small{flex:1 1 160px;color:var(--muted);font-size:12px;line-height:1.35}
 .pay button.on{background:var(--red);color:var(--on-red);box-shadow:none}
 .btn:disabled{opacity:.45;cursor:not-allowed}\n.imp{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--ink-2);margin:4px 0 8px}.imp input{flex:1;min-width:0;max-width:140px;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:800 16px var(--font);padding:0 10px;text-align:right}\n.note.ofr{display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);color:var(--ink)}.note.ofr .i{flex:none;margin-top:1px;color:var(--ok)}.note.ofr b{color:var(--ok)}
 .incn{width:100%;min-height:64px;box-sizing:border-box;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:14px var(--font);padding:10px;margin-top:8px}
@@ -1032,6 +1040,7 @@ const rkey=()=>S.ruta?(S.ruta.fecha||'sin-fecha'):'x';
 const numDe=p=>S.num&&S.num[p.id]||'·';
 const porNum=(a,b)=>(+numDe(a)||99)-(+numDe(b)||99);
 const ICON={
+  cam:'<svg class="i" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
   nav:'<svg class="i" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg>',
   phone:'<svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
   check:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>',
@@ -1064,6 +1073,7 @@ function render(){
   if(keepMap){const mapEl=document.getElementById('map');mapEl.remove();m.innerHTML=h;const slot=document.getElementById('map');slot.replaceWith(mapEl);}
   else{if(S.map){S.map.remove();S.map=null;}m.innerHTML=h;}
   if(S.tab==='ruta')dibujaMapa();
+  pintaFirma();
 }
 
 function vCarga(r){
@@ -1108,11 +1118,11 @@ function vPedidos(r){
     if(p.notas)c+=`<div class="note">${esc(p.notas)}</div>`;
     if(p.ofrece&&!d)c+=`<div class="note ofr">${ICON.info}<span><b>Ofrécele:</b> ${esc(p.ofrece)}</span></div>`;
     if(p.tel)c+=`<div class="tel">Teléfono: <b>${esc(p.tel)}</b></div>`;
-    if(d){c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':d.pago==='A cuenta'?'Apuntado a cuenta':'Cobrado '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}</span></div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`;}
+    if(d){c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':d.pago==='A cuenta'?'Apuntado a cuenta':'Cobrado '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}${d.firma?' · firmado':''}${d.foto?' · con foto':''}</span></div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`;}
     else{
       c+=`<div class="acts"><a class="btn" href="${navURL(p)}" target="_blank" rel="noopener">${ICON.nav}Cómo llegar</a>${p.tel?`<a class="btn" href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}Llamar</a><a class="btn" href="${esc(waURL(p,eta[p.id]))}" target="_blank" rel="noopener">${ICON.chat}Avisar que llego</a>`:''}</div>`;
       if(S.cobrar===p.id){
-        c+=`${p.debe>0?`<button class="tog${S.conDeuda!==false?' on':''}" data-deuda><i></i>Cobrar también lo de antes (${eur(p.debe)})</button>`:''}<label class="imp">Importe cobrado <input id="cobImp" inputmode="decimal" value="${esc(String(+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',','))}"> €</label><div class="pay">${['Efectivo','Bizum','Tarjeta','A cuenta'].map(t=>`<button data-pay="${t}" data-id="${esc(p.id)}">${t}</button>`).join('')}</div><button class="btn sm" data-cobrar="">Cancelar</button>`;
+        c+=`${p.debe>0?`<button class="tog${S.conDeuda!==false?' on':''}" data-deuda><i></i>Cobrar también lo de antes (${eur(p.debe)})</button>`:''}<label class="imp">Importe cobrado <input id="cobImp" inputmode="decimal" value="${esc(String(+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',','))}"> €</label>${bloquePrueba(p)}<div class="pay">${['Efectivo','Bizum','Tarjeta','A cuenta'].map(t=>`<button data-pay="${t}" data-id="${esc(p.id)}">${t}</button>`).join('')}</div><button class="btn sm" data-cobrar="">Cancelar</button>`;
       }else if(S.inc&&S.inc.id===p.id){
         c+=`<div class="pay">${MOTIVOS.map(m=>`<button data-inc="${esc(m)}" class="${S.inc.motivo===m?'on':''}">${esc(m)}</button>`).join('')}</div><textarea class="incn" id="incNota" maxlength="300" placeholder="Nota para la nave (opcional): qué ha pasado, cuándo volver…">${esc(S.inc.nota||'')}</textarea><div class="acts"><button class="btn pri" data-incok="${esc(p.id)}"${S.inc.motivo?'':' disabled'}>Guardar incidencia</button><button class="btn sm" data-noent="">Cancelar</button></div>`;
       }else c+=`<div class="acts"><button class="btn pri" data-cobrar="${esc(p.id)}">${ICON.check}Entregado</button><button class="btn" data-noent="${esc(p.id)}">${ICON.x}No entregado</button></div>`;
@@ -1213,9 +1223,9 @@ document.addEventListener('click',ev=>{
   if(t.hasAttribute('data-deuda')){S.conDeuda=S.conDeuda===false;render();return;}
   if(t.dataset.pay){const p=S.ruta.paradas.find(x=>x.id===t.dataset.id);if(!p)return;const met=t.dataset.pay,now=new Date();
     const inp=document.getElementById('cobImp'),v=inp?parseFloat(String(inp.value).replace(/\s/g,'').replace(',','.')):NaN,total=met==='A cuenta'?0:+(isFinite(v)&&v>=0?v:p.importe).toFixed(2);
-    S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes())};S.cobrar=null;guarda();subeEntrega(p,true);
+    const pr=pruebaDe(p);S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes()),firma:!!pr.firma,foto:!!pr.foto,deuda:met!=='A cuenta'&&S.conDeuda!==false&&p.debe>0&&total>=+(p.importe+p.debe-0.01).toFixed(2)?+p.debe:0};S.cobrar=null;S.prueba=null;guarda();subeEntrega(p,true);if(pr.firma||pr.foto)guardaPrueba(p,pr);
     toast(met==='A cuenta'?`${p.cli}: apuntado a cuenta`:`${p.cli}: cobrado ${eur(total)} en ${met.toLowerCase()}`);calcula();return;}
-  if(t.dataset.undo){const p=S.ruta.paradas.find(x=>x.id===t.dataset.undo);delete S.hecho[t.dataset.undo];guarda();if(p)subeEntrega(p,false);calcula();return;}
+  if(t.dataset.undo){const p=S.ruta.paradas.find(x=>x.id===t.dataset.undo);delete S.hecho[t.dataset.undo];guarda();if(p){subeEntrega(p,false);quitaPrueba(p);}calcula();return;}
   if(t.hasAttribute('data-vuelta')){S.vuelta=!S.vuelta;LS.set('vuelta',S.vuelta);calcula();return;}
   if(t.hasAttribute('data-osrm')){S.osrm=!S.osrm;LS.set('osrm',S.osrm);calcula();return;}
   if(t.hasAttribute('data-desde')){
@@ -1353,10 +1363,61 @@ async function abre(rr){
   SEC.rutaId=rr.id;SEC.dia=rr.fecha;SEC.creado=rr.creado;await ponRuta(ruta);await sincroniza();
 }
 // entregas: solo un identificador opaco de la parada viaja al servidor (sin datos del cliente)
+/* ============ firma y foto de la entrega ============
+   La firma se dibuja aquí y la foto se reduce en el móvil (máx. ~150 KB). Las dos viajan cifradas con la clave de reparto
+   (AES-256-GCM, AAD fecha|email|pid|prueba) a una tabla aparte; Gato Control las descifra y las guarda con el albarán. */
+function bloquePrueba(p){
+  if(!S.prueba||S.prueba.id!==p.id)S.prueba={id:p.id,trazos:[],foto:''};const q=S.prueba;
+  return `<div class="prb"><div class="prb-h"><b>Firma del cliente</b><small>${q.trazos.length?'':'firma con el dedo'}</small><button class="btn sm" data-prb="borra"${q.trazos.length?'':' disabled'}>Borrar</button></div>
+  <canvas id="firmaPad" class="pad" aria-label="Recuadro para la firma del cliente"></canvas>
+  <div class="prb-f">${q.foto?`<img src="${q.foto}" alt="Foto de la entrega">`:''}<label class="btn sm">${ICON.cam}${q.foto?'Repetir foto':'Foto de la entrega'}<input type="file" accept="image/*" capture="environment" id="prbFoto" hidden></label><small>${q.foto?'Foto lista.':'Opcional: la mercancía en su sitio, sin personas ni documentos.'}</small></div></div>`;}
+function pintaFirma(){
+  const c=document.getElementById('firmaPad');if(!c||!S.prueba)return;const q=S.prueba,dpr=Math.min(3,window.devicePixelRatio||1),W=c.clientWidth||300,H=c.clientHeight||150;
+  c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  const tinta=(g,w,h,lw)=>{g.lineCap='round';g.lineJoin='round';g.strokeStyle='#1b2a4a';g.lineWidth=lw;for(const tr of q.trazos){g.beginPath();tr.forEach((pt,i)=>{const x=pt[0]*w,y=pt[1]*h;if(i)g.lineTo(x,y);else g.moveTo(x,y);});if(tr.length===1)g.lineTo(tr[0][0]*w+.1,tr[0][1]*h+.1);g.stroke();}};
+  g.clearRect(0,0,W,H);g.strokeStyle='rgba(27,42,74,.18)';g.lineWidth=1;g.beginPath();g.moveTo(14,H-30);g.lineTo(W-14,H-30);g.stroke();tinta(g,W,H,2.4);
+  if(c._ok)return;c._ok=true;let tr=null;
+  const pos=e=>{const r=c.getBoundingClientRect();return [Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))];};
+  c.addEventListener('pointerdown',e=>{e.preventDefault();try{c.setPointerCapture(e.pointerId);}catch(er){}tr=[pos(e)];q.trazos.push(tr);});
+  c.addEventListener('pointermove',e=>{if(!tr)return;e.preventDefault();const p=pos(e),l=tr[tr.length-1];if(Math.hypot(p[0]-l[0],p[1]-l[1])<0.004)return;tr.push(p);
+    const r=c.getBoundingClientRect();g.lineCap='round';g.strokeStyle='#1b2a4a';g.lineWidth=2.4;g.beginPath();g.moveTo(l[0]*r.width,l[1]*r.height);g.lineTo(p[0]*r.width,p[1]*r.height);g.stroke();});
+  const fin=()=>{if(!tr)return;tr=null;if(q.trazos.length>400)q.trazos.splice(0,q.trazos.length-400);const b=document.querySelector('[data-prb="borra"]');if(b)b.disabled=false;const sm=c.parentNode.querySelector('.prb-h small');if(sm)sm.textContent='';};
+  c.addEventListener('pointerup',fin);c.addEventListener('pointercancel',fin);c.addEventListener('pointerleave',e=>{if(e.buttons===0)fin();});
+}
+// firma a PNG transparente de 600×200 (unos 5–15 KB)
+function firmaPNG(q){if(!q||!q.trazos.length)return '';const c=document.createElement('canvas');c.width=600;c.height=200;const g=c.getContext('2d');
+  g.lineCap='round';g.lineJoin='round';g.strokeStyle='#1b2a4a';g.lineWidth=4;
+  for(const tr of q.trazos){g.beginPath();tr.forEach((pt,i)=>{const x=pt[0]*600,y=pt[1]*200;if(i)g.lineTo(x,y);else g.moveTo(x,y);});if(tr.length===1)g.lineTo(tr[0][0]*600+.1,tr[0][1]*200+.1);g.stroke();}
+  return c.toDataURL('image/png');}
+function pruebaDe(p){const q=S.prueba&&S.prueba.id===p.id?S.prueba:null;return {firma:firmaPNG(q),foto:q&&q.foto||''};}
+// foto: se lee como data: (la CSP no admite blob:) y se reduce a JPEG de 150 KB como mucho
+function fotoReduce(file){return new Promise(res=>{const fr=new FileReader();fr.onerror=()=>res('');fr.onload=()=>{const img=new Image();img.onerror=()=>res('');
+  img.onload=()=>{const cv=mx=>{const k=Math.min(1,mx/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*k));c.height=Math.max(1,Math.round(img.height*k));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c;};
+    let mx=900,q=0.7,d=cv(mx).toDataURL('image/jpeg',q);while(d.length>150*1024&&mx>=240){if(q>0.46)q-=0.08;else{mx=Math.round(mx*0.8);q=0.62;}d=cv(mx).toDataURL('image/jpeg',q);}
+    res(d.length<=150*1024&&/^data:image\/jpeg;base64,/.test(d)?d:'');};img.src=fr.result;};fr.readAsDataURL(file);});}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-prb]');if(!b||!S.prueba)return;ev.stopPropagation();
+  if(b.dataset.prb==='borra'){S.prueba.trazos=[];b.disabled=true;pintaFirma();}},true);
+document.addEventListener('change',async ev=>{const t=ev.target;if(!t||t.id!=='prbFoto'||!S.prueba)return;const f=t.files&&t.files[0];if(!f)return;
+  const id=S.prueba.id;toast('Preparando la foto…');const d=await fotoReduce(f);if(!S.prueba||S.prueba.id!==id)return;
+  if(!d){toast('No se ha podido usar la foto. Prueba otra vez.');return;}S.prueba.foto=d;render();});
+async function cifraPrueba(obj,pid){const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:TE.encode(SEC.dia+'|'+SEC.email+'|'+pid+'|prueba')},SEC.key,TE.encode(JSON.stringify(obj))));
+  return {v:1,alg:'AES-256-GCM',iv:b64e(iv),ct:b64e(ct)};}
+const prbKey=p=>'prb_'+rkey()+'_'+p.pid;
+async function guardaPrueba(p,pr){if(!S.ruta||S.ruta.ejemplo)return;await guardaE(prbKey(p),pr);await subePrueba(p);}
+async function subePrueba(p){
+  if(!SEC.rutaId||!S.ruta||S.ruta.ejemplo||!/^[0-9a-f]{16}$/.test(p.pid||''))return;const h=S.hecho[p.id];if(!h)return;
+  const pr=await leeE(prbKey(p));if(!pr){h.prSync=true;guarda();return;}
+  try{const dato=await cifraPrueba({firma:pr.firma||'',foto:pr.foto||'',t:h.t||''},p.pid);
+    await sbRest('rep_pruebas?on_conflict=ruta_id,pid',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({ruta_id:SEC.rutaId,pid:p.pid,dato,at:new Date().toISOString()})});
+    h.prSync=true;try{localStorage.removeItem('gr_e_'+prbKey(p));}catch(e){}guarda();}catch(e){}}
+async function quitaPrueba(p){try{localStorage.removeItem('gr_e_'+prbKey(p));}catch(e){}
+  if(!SEC.rutaId||!S.ruta||S.ruta.ejemplo||!/^[0-9a-f]{16}$/.test(p.pid||''))return;
+  try{await sbRest('rep_pruebas?ruta_id=eq.'+SEC.rutaId+'&pid=eq.'+p.pid,{method:'DELETE'});}catch(e){}}
 async function subeEntrega(p,on){
   if(!SEC.rutaId||!S.ruta||S.ruta.ejemplo||!/^[0-9a-f]{16}$/.test(p.pid||''))return;const k='pdel_'+SEC.rutaId,del=new Set(LS.get(k,[]));
   try{
-    if(on){const h=S.hecho[p.id]||{},dato=await cifraDato({pago:h.pago||'',total:+h.total||0,inc:h.inc||'',nota:h.nota||'',t:h.t||''},p.pid);
+    if(on){const h=S.hecho[p.id]||{},dato=await cifraDato({pago:h.pago||'',total:+h.total||0,deuda:+h.deuda||0,inc:h.inc||'',nota:h.nota||'',t:h.t||''},p.pid);
       await sbRest('rep_entregas?on_conflict=ruta_id,pid',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({ruta_id:SEC.rutaId,pid:p.pid,estado:h.inc?'incidencia':'entregado',dato,at:new Date().toISOString()})});
       del.delete(p.pid);if(S.hecho[p.id])S.hecho[p.id].sync=true;}
     else{await sbRest('rep_entregas?ruta_id=eq.'+SEC.rutaId+'&pid=eq.'+p.pid,{method:'DELETE'});del.delete(p.pid);}
@@ -1365,6 +1426,7 @@ async function subeEntrega(p,on){
 }
 async function sincroniza(){
   if(!SEC.rutaId||!S.ruta||S.ruta.ejemplo||navigator.onLine===false)return;
+  for(const p of S.ruta.paradas){const h=S.hecho[p.id];if(h&&(h.firma||h.foto)&&!h.prSync&&!h.remoto)await subePrueba(p);}
   for(const pid of LS.get('pdel_'+SEC.rutaId,[])){const p=S.ruta.paradas.find(x=>x.pid===pid);if(p&&!S.hecho[p.id])await subeEntrega(p,false);}
   for(const p of S.ruta.paradas){const h=S.hecho[p.id];if(h&&!h.sync&&!h.remoto)await subeEntrega(p,true);}
   try{const E=await sbRest('rep_entregas?select=pid,at,estado,dato&ruta_id=eq.'+SEC.rutaId)||[],on=new Set(E.map(e=>e.pid));let cambia=false;
