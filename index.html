@@ -6,10 +6,10 @@
 <meta name="referrer" content="strict-origin">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="App del repartidor de El Gato con Bolsas: hoja de carga, pedidos por cliente y ruta óptima.">
-<meta name="theme-color" content="#2a1d14">
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#1d1915" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Gato Reparto">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -892,7 +892,30 @@ main{display:flex;flex-direction:column;gap:16px;padding-block:16px calc(var(--t
 .gate .lock .i{width:16px;height:16px;flex:none;margin-top:1px}
 .mrow{display:flex;flex-wrap:wrap;gap:8px}
 .mrow .btn.on{background:var(--red);color:var(--on-red)}
-.priv{position:fixed;inset:0;z-index:99;background:#2a1d14;display:grid;place-items:center}.priv[hidden]{display:none}.priv .logo{width:72px;height:72px}
+.priv{position:fixed;inset:0;z-index:99;display:grid;place-items:center}.priv[hidden]{display:none}.priv .logo{width:72px;height:72px}
+/* crema de papel (Paper Texture, 21st.dev) en lugar del cuero; en oscuro, carbón cálido con la misma trama */
+:root{--bg:#faf9f6;--paper:#faf9f6;--paper-dot:rgba(42,29,20,.08);--paper-line:rgba(42,29,20,.02);--glow:rgba(196,23,29,0);--top-bg:rgba(250,249,246,.9);--top-solid:#faf9f6}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15120f;--paper:#15120f;--paper-dot:rgba(255,248,239,.07);--paper-line:rgba(255,248,239,.025);--glow:rgba(255,107,98,.10);--top-bg:rgba(29,25,21,.9);--top-solid:#1d1915}}
+:root[data-theme="dark"]{--bg:#15120f;--paper:#15120f;--paper-dot:rgba(255,248,239,.07);--paper-line:rgba(255,248,239,.025);--glow:rgba(255,107,98,.10);--top-bg:rgba(29,25,21,.9);--top-solid:#1d1915}
+body,.gate,.priv{background-color:var(--paper);background-image:radial-gradient(ellipse 90% 55% at 50% -10%,var(--glow),transparent 70%),radial-gradient(circle at 1px 1px,var(--paper-dot) 1px,transparent 0),repeating-linear-gradient(0deg,transparent,transparent 2px,var(--paper-line) 2px,var(--paper-line) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,var(--paper-line) 2px,var(--paper-line) 4px);background-size:100% 100%,8px 8px,32px 32px,32px 32px}
+body{background-attachment:fixed}
+body::before{background:var(--top-solid)}
+.top{color:var(--ink);background:var(--top-bg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line),0 6px 18px rgba(42,29,20,.06)}
+.tt b em{color:var(--red)}.tt small{color:var(--muted)}
+.topbtn{background:var(--card);border:1px solid var(--line);color:var(--ink)}.topbtn:hover{background:var(--field)}
+.prog{color:var(--muted)}.prog b{color:var(--ink)}.prog i{background:var(--line)}.prog u{background:var(--red)}
+.next{background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow)}
+.next small{color:var(--red)}.next p{color:var(--ink-2)}
+.next .btn{background:var(--field);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.next .btn.pri{background:var(--red);color:var(--on-red);box-shadow:var(--shadow-btn)}
+.lrow .n{background:var(--ink);color:var(--card)}
+.toast{background:var(--ink);color:var(--card)}
+.gate{color:var(--ink)}.gate h1 em{color:var(--red)}.gate p{color:var(--ink-2)}.gate p b{color:var(--ink)}
+.gate label{color:var(--kraft)}
+.gate input{border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.gate input:focus{outline:2px solid var(--focus);outline-offset:1px}
+.gate .lk{color:var(--red-2)}.gate .err{background:var(--bad-bg);color:var(--bad)}.gate .lock{color:var(--muted)}
+
 </style>
 
 </head><body>

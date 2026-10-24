@@ -1,6 +1,6 @@
 // Gato Reparto · service worker: la app funciona sin cobertura.
 // App y librerías: primero la caché. Mapas (teselas): caché según se van viendo. Tiempos de OSRM: siempre red (si no hay, la app estima).
-const V='gato-reparto-v9';
+const V='gato-reparto-v10';
 const APP=['./','index.html','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png','icon-maskable.png','leaflet.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>Promise.all(APP.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V&&k!=='gato-tiles').map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
