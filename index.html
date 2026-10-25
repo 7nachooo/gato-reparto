@@ -816,7 +816,9 @@ button,.btn,a.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-colo
 .btn,.pay button,.prow,.seg button,.tabs button,.tog{transition:transform .12s cubic-bezier(.2,.8,.2,1),background-color .15s ease,box-shadow .15s ease}
 .btn:active:not(:disabled),.pay button:active,.prow:active,.seg button:active,.tog:active{transform:scale(.97)}
 .pay button.on{background:var(--red);color:var(--on-red);box-shadow:none}
-.btn:disabled{opacity:.45;cursor:not-allowed}\n.imp{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--ink-2);margin:4px 0 8px}.imp input{flex:1;min-width:0;max-width:140px;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:800 16px var(--font);padding:0 10px;text-align:right}\n.note.ofr{display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);color:var(--ink)}.note.ofr .i{flex:none;margin-top:1px;color:var(--ok)}.note.ofr b{color:var(--ok)}
+.btn:disabled{opacity:.45;cursor:not-allowed}\n.imp{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--ink-2);margin:4px 0 8px}.imp input{flex:1;min-width:0;max-width:140px;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:800 16px var(--font);padding:0 10px;text-align:right}\n.pay:has(> :nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
+.note.puerta{display:flex;gap:8px;align-items:flex-start;background:var(--warn-bg);color:var(--ink);box-shadow:inset 3px 0 0 var(--warn)}.note.puerta b{color:var(--warn)}.note.puerta small{color:var(--ink-2);font-size:12px}
+.note.ofr{display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);color:var(--ink)}.note.ofr .i{flex:none;margin-top:1px;color:var(--ok)}.note.ofr b{color:var(--ok)}
 .incn{width:100%;min-height:64px;box-sizing:border-box;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);font:14px var(--font);padding:10px;margin-top:8px}
 .cierre{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .cierre div{background:var(--field);border-radius:12px;padding:10px 12px}.cierre small{display:block;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.cierre b{font:400 20px var(--brand)}
@@ -960,7 +962,7 @@ function sanea(r){
     tel:String(p.tel||'').replace(/[^\d+ ]/g,'').slice(0,40),
     lat:n(p.lat),lon:n(p.lon),zona:String(p.zona||'').slice(0,80),
     importe:n(p.importe)||0,debe:n(p.debe)||0,re:!!p.re,
-    notas:String(p.notas||'').slice(0,600),hora:String(p.hora||'').slice(0,8),ofrece:String(p.ofrece||'').slice(0,200),
+    notas:String(p.notas||'').slice(0,600),hora:String(p.hora||'').slice(0,8),ofrece:String(p.ofrece||'').slice(0,200),puerta:!!p.puerta,extra:Math.max(0,+(n(p.extra)||0).toFixed(2)),motivo:String(p.motivo||'').slice(0,160),
     lin:(Array.isArray(p.lin)?p.lin:Array.isArray(p.lineas)?p.lineas.map(l=>[l.n,l.q,l.precio]):[]).slice(0,80)
         .map(l=>[String(l&&l[0]||'').slice(0,120),n(l&&l[1])||1,l&&l[2]!=null?n(l[2]):null]).filter(l=>l[0])
   }));
@@ -1117,15 +1119,16 @@ function vPedidos(r){
     const d=S.hecho[p.id],uds=p.lin.reduce((s,l)=>s+l[1],0);
     let c=`<article class="card${d?' done':''}"><div class="ch"><span class="badge">${d?ICON.check:numDe(p)}</span><div style="min-width:0"><b>${esc(p.cli)}</b><small>${esc(p.dir||'Sin dirección')}</small></div>${!d&&eta[p.id]!=null?`<div class="eta"><b>${min2hm(eta[p.id])}</b><small>llegada</small></div>`:''}</div>
       <ul class="lines">${p.lin.map(l=>`<li><span>${esc(l[0])}</span><b>× ${l[1]}</b></li>`).join('')}</ul>
-      <div class="money"><span>Pedido <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}</div>`;
+      <div class="money"><span>Pedido <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0&&!p.puerta?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}</div>`;
     if(p.notas)c+=`<div class="note">${esc(p.notas)}</div>`;
+    if(p.puerta&&!d)c+=`<div class="note puerta">${ICON.info}<span><b>Cobro en la puerta${p.extra>0?': '+eur(p.importe+p.extra):''}</b>${p.extra>0?` <small>pedido ${eur(p.importe)} + ${eur(p.extra)}</small>`:''}<br>${esc(p.motivo||'Paga en la entrega')}. Sin cobro no se descarga.</span></div>`;
     if(p.ofrece&&!d)c+=`<div class="note ofr">${ICON.info}<span><b>Ofrécele:</b> ${esc(p.ofrece)}</span></div>`;
     if(p.tel)c+=`<div class="tel">Teléfono: <b>${esc(p.tel)}</b></div>`;
     if(d){c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':d.pago==='A cuenta'?'Apuntado a cuenta':'Cobrado '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}${d.firma?' · firmado':''}${d.foto?' · con foto':''}</span></div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`;}
     else{
       c+=`<div class="acts"><a class="btn" href="${navURL(p)}" target="_blank" rel="noopener">${ICON.nav}Cómo llegar</a>${p.tel?`<a class="btn" href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}Llamar</a><a class="btn" href="${esc(waURL(p,eta[p.id]))}" target="_blank" rel="noopener">${ICON.chat}Avisar que llego</a>`:''}</div>`;
       if(S.cobrar===p.id){
-        c+=`${p.debe>0?`<button class="tog${S.conDeuda!==false?' on':''}" data-deuda><i></i>Cobrar también lo de antes (${eur(p.debe)})</button>`:''}<label class="imp">Importe cobrado <input id="cobImp" inputmode="decimal" value="${esc(String(+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',','))}"> €</label>${bloquePrueba(p)}<div class="pay">${['Efectivo','Bizum','Tarjeta','A cuenta'].map(t=>`<button data-pay="${t}" data-id="${esc(p.id)}">${t}</button>`).join('')}</div><button class="btn sm" data-cobrar="">Cancelar</button>`;
+        c+=`${p.debe>0&&!p.puerta?`<button class="tog${S.conDeuda!==false?' on':''}" data-deuda><i></i>Cobrar también lo de antes (${eur(p.debe)})</button>`:''}<label class="imp">Importe cobrado <input id="cobImp" inputmode="decimal" value="${esc(String(+(p.puerta?p.importe+p.extra:p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',','))}"> €</label>${bloquePrueba(p)}<div class="pay">${(p.puerta?['Efectivo','Bizum','Tarjeta']:['Efectivo','Bizum','Tarjeta','A cuenta']).map(t=>`<button data-pay="${t}" data-id="${esc(p.id)}">${t}</button>`).join('')}</div><button class="btn sm" data-cobrar="">Cancelar</button>`;
       }else if(S.inc&&S.inc.id===p.id){
         c+=`<div class="pay">${MOTIVOS.map(m=>`<button data-inc="${esc(m)}" class="${S.inc.motivo===m?'on':''}">${esc(m)}</button>`).join('')}</div><textarea class="incn" id="incNota" maxlength="300" placeholder="Nota para la nave (opcional): qué ha pasado, cuándo volver…">${esc(S.inc.nota||'')}</textarea><div class="acts"><button class="btn pri" data-incok="${esc(p.id)}"${S.inc.motivo?'':' disabled'}>Guardar incidencia</button><button class="btn sm" data-noent="">Cancelar</button></div>`;
       }else c+=`<div class="acts"><button class="btn pri" data-cobrar="${esc(p.id)}">${ICON.check}Entregado</button><button class="btn" data-noent="${esc(p.id)}">${ICON.x}No entregado</button></div>`;
@@ -1226,7 +1229,7 @@ document.addEventListener('click',ev=>{
   if(t.hasAttribute('data-deuda')){S.conDeuda=S.conDeuda===false;render();return;}
   if(t.dataset.pay){const p=S.ruta.paradas.find(x=>x.id===t.dataset.id);if(!p)return;const met=t.dataset.pay,now=new Date();
     const inp=document.getElementById('cobImp'),v=inp?parseFloat(String(inp.value).replace(/\s/g,'').replace(',','.')):NaN,total=met==='A cuenta'?0:+(isFinite(v)&&v>=0?v:p.importe).toFixed(2);
-    const pr=pruebaDe(p);S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes()),firma:!!pr.firma,foto:!!pr.foto,deuda:met!=='A cuenta'&&S.conDeuda!==false&&p.debe>0&&total>=+(p.importe+p.debe-0.01).toFixed(2)?+p.debe:0};S.cobrar=null;S.prueba=null;guarda();subeEntrega(p,true);if(pr.firma||pr.foto)guardaPrueba(p,pr);
+    const pr=pruebaDe(p);S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes()),firma:!!pr.firma,foto:!!pr.foto,extra:met!=='A cuenta'?Math.max(0,+(total-p.importe).toFixed(2)):0,deuda:met!=='A cuenta'&&S.conDeuda!==false&&p.debe>0&&total>=+(p.importe+p.debe-0.01).toFixed(2)?+p.debe:0};S.cobrar=null;S.prueba=null;guarda();subeEntrega(p,true);if(pr.firma||pr.foto)guardaPrueba(p,pr);
     toast(met==='A cuenta'?`${p.cli}: apuntado a cuenta`:`${p.cli}: cobrado ${eur(total)} en ${met.toLowerCase()}`);calcula();return;}
   if(t.dataset.undo){const p=S.ruta.paradas.find(x=>x.id===t.dataset.undo);delete S.hecho[t.dataset.undo];guarda();if(p){subeEntrega(p,false);quitaPrueba(p);}calcula();return;}
   if(t.hasAttribute('data-vuelta')){S.vuelta=!S.vuelta;LS.set('vuelta',S.vuelta);calcula();return;}
@@ -1420,7 +1423,7 @@ async function quitaPrueba(p){try{localStorage.removeItem('gr_e_'+prbKey(p));}ca
 async function subeEntrega(p,on){
   if(!SEC.rutaId||!S.ruta||S.ruta.ejemplo||!/^[0-9a-f]{16}$/.test(p.pid||''))return;const k='pdel_'+SEC.rutaId,del=new Set(LS.get(k,[]));
   try{
-    if(on){const h=S.hecho[p.id]||{},dato=await cifraDato({pago:h.pago||'',total:+h.total||0,deuda:+h.deuda||0,inc:h.inc||'',nota:h.nota||'',t:h.t||''},p.pid);
+    if(on){const h=S.hecho[p.id]||{},dato=await cifraDato({pago:h.pago||'',total:+h.total||0,deuda:+h.deuda||0,extra:+h.extra||0,inc:h.inc||'',nota:h.nota||'',t:h.t||''},p.pid);
       await sbRest('rep_entregas?on_conflict=ruta_id,pid',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({ruta_id:SEC.rutaId,pid:p.pid,estado:h.inc?'incidencia':'entregado',dato,at:new Date().toISOString()})});
       del.delete(p.pid);if(S.hecho[p.id])S.hecho[p.id].sync=true;}
     else{await sbRest('rep_entregas?ruta_id=eq.'+SEC.rutaId+'&pid=eq.'+p.pid,{method:'DELETE'});del.delete(p.pid);}
@@ -1439,7 +1442,7 @@ async function sincroniza(){
     if(cambia){guarda();calcula();}}catch(e){}
 }
 
-const MOTIVOS=['No estaba','Cerrado','Rechaza el pedido','Entrega parcial','Otro'];
+const MOTIVOS=['No estaba','Cerrado','No paga en la puerta','Rechaza el pedido','Entrega parcial','Otro'];
 // WhatsApp al cliente: «llego en unos X min»
 function waURL(p,llega){const t=String(p.tel||'').replace(/\D/g,''),n=t.length===9?'34'+t:t,now=new Date(),m=llega!=null?Math.max(5,Math.round((llega-(now.getHours()*60+now.getMinutes()))/5)*5):15;
   return 'https://wa.me/'+n+'?text='+encodeURIComponent(`Hola, soy el repartidor de El Gato con Bolsas. Llego en unos ${m} minutos con vuestro pedido.`);}
