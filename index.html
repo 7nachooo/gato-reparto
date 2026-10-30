@@ -908,6 +908,15 @@ button,.btn,a.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-colo
 .mrow{display:flex;flex-wrap:wrap;gap:8px}
 .mrow .btn.on{background:var(--red);color:var(--on-red)}
 .priv{position:fixed;inset:0;z-index:99;background:var(--brown);display:grid;place-items:center}.priv[hidden]{display:none}.priv .logo{width:72px;height:72px}
+
+/* ===== repaso 30/10 ===== */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.pri{background:linear-gradient(180deg,#e8453c,#c30a13);color:#fff}:root:not([data-theme="light"]) .btn.pri:hover{background:linear-gradient(180deg,#f0564d,#d0141c)}}
+:root[data-theme="dark"] .btn.pri{background:linear-gradient(180deg,#e8453c,#c30a13);color:#fff}
+:root[data-theme="dark"] .btn.pri:hover{background:linear-gradient(180deg,#f0564d,#d0141c)}
+.kpi small{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.2}
+em,small{font-size:max(11px,.8em)}
+.btn:disabled,.btn[disabled]{opacity:.42;cursor:not-allowed;filter:grayscale(.6);box-shadow:none}
+html,body{overflow-x:clip}
 </style>
 
 </head><body>
@@ -1108,7 +1117,7 @@ function vPedidos(r){
   const pend=P.filter(p=>!S.hecho[p.id]),hech=P.filter(p=>S.hecho[p.id]);
   const efectivo=hech.reduce((s,p)=>s+(S.hecho[p.id].pago==='Efectivo'?S.hecho[p.id].total:0),0);
   const otros=hech.reduce((s,p)=>s+(['Bizum','Tarjeta'].includes(S.hecho[p.id].pago)?S.hecho[p.id].total:0),0);
-  let h=`<div class="kpis"><div class="kpi"><small>Quedan</small><b class="num">${pend.length}<span>/ ${P.length}</span></b></div><div class="kpi"><small>Efectivo</small><b class="num">${eur(efectivo).replace(' €','')}<span>€</span></b></div><div class="kpi"><small>Bizum·tarjeta</small><b class="num">${eur(otros).replace(' €','')}<span>€</span></b></div></div>
+  let h=`<div class="kpis"><div class="kpi"><small>Quedan</small><b class="num">${pend.length}<span>/ ${P.length}</span></b></div><div class="kpi"><small>Efectivo</small><b class="num">${eur(efectivo).replace(' €','')}<span>€</span></b></div><div class="kpi"><small>Bizum y tarjeta</small><b class="num">${eur(otros).replace(' €','')}<span>€</span></b></div></div>
   <div class="acts" style="margin:0"><button class="btn sm" data-cierre>${ICON.check}Cierre del día</button></div>
   <div class="seg"><button data-pf="pend" class="${S.pedFlt==='pend'?'on':''}">Pendientes · ${pend.length}</button><button data-pf="hech" class="${S.pedFlt==='hech'?'on':''}">Entregados · ${hech.length}</button><button data-pf="todos" class="${S.pedFlt==='todos'?'on':''}">Todos</button></div>
   <label class="search">${ICON.search}<input id="q" type="search" placeholder="Buscar cliente o calle" value="${esc(S.q)}" autocomplete="off"></label>`;
@@ -1505,6 +1514,12 @@ document.addEventListener('visibilitychange',wake);wake();
 // app instalable y sin conexión
 if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}}
 
+
+/* «1 paradas», «1 productos»…: en singular cuando la cifra es 1 */
+(function(){const SG={pedidos:'pedido',paradas:'parada',productos:'producto',unidades:'unidad',clientes:'cliente',facturas:'factura',entregas:'entrega',bultos:'bulto',uds:'ud'};
+  const RE=/(^|[^\d.,])1 (pedidos|paradas|productos|unidades|clientes|facturas|entregas|bultos)\b/g;
+  function arregla(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode())){const t=n.nodeValue;if(t.indexOf('1 ')<0)continue;RE.lastIndex=0;if(!RE.test(t))continue;RE.lastIndex=0;n.nodeValue=t.replace(RE,(m,a,b)=>a+'1 '+SG[b]);}}
+  let pend=false;new MutationObserver(()=>{if(!pend){pend=true;requestAnimationFrame(()=>{pend=false;arregla();});}}).observe(document.body,{subtree:true,childList:true,characterData:true});})();
 </script>
 
 </body></html>
