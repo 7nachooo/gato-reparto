@@ -937,6 +937,67 @@ html,body{overflow-x:clip}
 .aviso{margin:0;font-size:12.5px;line-height:1.4;font-weight:700;color:var(--warn)}.aviso:empty{display:none}
 .lock{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:12.5px;line-height:1.45;color:var(--muted)}.lock svg{width:16px;height:16px;flex:none;margin-top:1px}.lock b{color:var(--ink)}
 .cierre .w2{grid-column:1/-1}
+
+/* ===== rediseño 12/11: mismo acabado que Gato Control ===== */
+main{gap:14px}
+.card,.sheet,.stops,.kpi,.search,.empty,.tog{border:1px solid var(--line);box-shadow:0 1px 2px rgba(42,29,20,.04),0 6px 18px rgba(42,29,20,.05)}
+.card{border-radius:18px}
+.kpi{border-radius:14px;padding:10px 12px 9px;background:linear-gradient(180deg,var(--card),var(--field))}
+.kpi small{font-size:12px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
+.kpi b{font-size:20px;margin-top:2px}
+.kpi .sub{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sect{font-size:15px;margin:6px 2px -4px}
+.btn.pri{background:linear-gradient(180deg,#d6232a,#b31319);color:#fff;box-shadow:0 6px 16px rgba(196,23,29,.26)}
+.btn.pri:hover{background:linear-gradient(180deg,#de2f36,#bd171d)}
+.btn.xl{min-height:54px;font-size:16px;border-radius:14px;flex:1 1 100%}
+.btn.ghost{background:none;box-shadow:none;color:var(--muted);min-height:40px;font-size:13px;flex:1 1 100%}
+.btn.ghost:hover{color:var(--bad)}
+.acts.fin{gap:4px}
+/* siguiente parada */
+.card.hero{padding:0;gap:0;overflow:hidden;border:0;box-shadow:0 10px 26px rgba(40,26,16,.18)}
+.hero-top{background:linear-gradient(135deg,var(--brown),var(--brown-2));color:#fff;padding:14px 16px 13px;display:flex;flex-direction:column;gap:5px;position:relative}
+.hero-top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--coral),rgba(255,95,87,0) 75%)}
+.hero-top small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--oro)}
+.hero-top b{font:400 20px/1.2 var(--brand);overflow-wrap:anywhere}
+.hero-top p{margin:0;font-size:13px;line-height:1.4;color:var(--cuero-suave)}
+.hero-body{padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--line);border-top:0;border-radius:0 0 18px 18px}
+/* accesos rápidos de la parada */
+.qa{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}
+.qa a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:58px;padding:6px 4px;border-radius:13px;background:var(--field);box-shadow:inset 0 0 0 1px var(--line);font-size:12px;font-weight:800;color:var(--ink);text-decoration:none;text-align:center;line-height:1.15;transition:transform .12s cubic-bezier(.2,.8,.2,1)}
+.qa a:active{transform:scale(.97)}
+.qa a .i{width:20px;height:20px}
+.qa a.go{background:linear-gradient(135deg,#3d1f1c,#5a2e28);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.qa a:only-child{flex-direction:row;gap:8px;font-size:14px;min-height:48px}
+/* filas */
+.rows{display:flex;flex-direction:column;gap:8px}
+.fila{display:grid;grid-template-columns:32px minmax(0,1fr) auto 16px;gap:11px;align-items:center;width:100%;box-sizing:border-box;padding:11px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line);text-align:left;transition:transform .12s cubic-bezier(.2,.8,.2,1),background-color .15s ease}
+.fila:active{transform:scale(.985);background:var(--field)}
+.fila .badge,.card:not(.hero) .ch .badge{width:32px;height:32px;font-size:13px;box-shadow:none}
+.fila.done .badge{background:var(--ok)}.fila.inc .badge,.card.done.inc .badge{background:var(--bad)}
+.fila .t{min-width:0}.fila .t b{display:block;font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fila .t small{display:block;font-size:12px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fila .r{text-align:right;white-space:nowrap}.fila .r b{display:block;font:400 14px var(--brand)}.fila .r small{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.fila.done .t b{color:var(--ink-2)}
+.chev{display:grid;place-items:center;color:var(--muted)}.chev .i{width:16px;height:16px}.chev.up{transform:rotate(180deg)}
+button.ch{width:100%;text-align:left;grid-template-columns:32px minmax(0,1fr) 16px;align-items:center}
+.card.done{opacity:1}
+/* avance de la carga */
+.cprog{display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--ink-2)}
+.cprog b{color:var(--ink);font-weight:800}
+.cprog i{display:block;height:8px;border-radius:6px;background:var(--line-2);overflow:hidden}
+.cprog u{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--red),var(--coral));transition:width .35s cubic-bezier(.2,.8,.2,1)}
+.prow{padding:14px 16px}.prow.on{background:var(--field)}
+/* cabecera y pestañas */
+.prog{font-size:12.5px}.prog i{height:6px;border-radius:6px}.prog u{border-radius:6px;background:linear-gradient(90deg,var(--coral),var(--oro))}
+.tabs{box-shadow:0 -8px 24px rgba(54,35,22,.1)}
+.tabs button{gap:3px}
+.tabs button.on::before{display:none}
+.tabs button .i{box-sizing:content-box;padding:4px 18px;border-radius:14px;transition:background-color .2s ease}
+.tabs button.on .i{background:color-mix(in srgb,var(--red) 14%,transparent)}
+.tabs button em{top:6px;left:calc(50% + 12px)}
+.next{border-radius:18px;padding:16px}
+main.in>*{animation:sube .28s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sube{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 </style>
 
 </head><body>
@@ -1045,25 +1106,28 @@ function optimiza(T,vuelta){
   return ord;
 }
 let calcN=0;
+function ultimaParada(){let best=null,bt=0;for(const p of (S.ruta&&S.ruta.paradas)||[]){const h=S.hecho[p.id];if(h&&h.ts>bt&&p.lat!=null&&p.lon!=null){bt=h.ts;best=p;}}
+  return best&&Date.now()-bt<6*36e5?{lat:best.lat,lon:best.lon,nombre:'Última parada · '+best.cli}:null;}
 async function calcula(){
   const r=S.ruta;if(!r)return;const id=++calcN;
   const pend=r.paradas.filter(p=>!S.hecho[p.id]&&p.lat!=null&&p.lon!=null);
-  const ini=S.desde||r.nave,pts=[ini,...pend];
-  if(S.vuelta&&S.desde)pts.push(r.nave);   // saliendo desde donde estoy: la vuelta es a la nave, no al punto de partida
+  const DS=S.desde||ultimaParada();S.origen=DS;
+  const ini=DS||r.nave,pts=[ini,...pend];
+  if(S.vuelta&&DS)pts.push(r.nave);   // saliendo desde donde estoy: la vuelta es a la nave, no al punto de partida
   let M=matrizLocal(pts);
   render();
   if(S.osrm&&navigator.onLine!==false&&pts.length>2){try{const m2=await matrizOSRM(pts);if(id!==calcN)return;M=m2;}catch(e){}}
   if(id!==calcN)return;
   // saliendo desde la posición actual con vuelta: la nave es el último punto; la columna 0 («volver al inicio») pasa a ser «volver a la nave»
   let T=M.T;
-  if(S.desde&&S.vuelta){const k=pts.length-1;T=M.T.slice(0,k).map((row,i)=>{const r2=row.slice(0,k);if(i>0)r2[0]=M.T[i][k];return r2;});}
+  if(DS&&S.vuelta){const k=pts.length-1;T=M.T.slice(0,k).map((row,i)=>{const r2=row.slice(0,k);if(i>0)r2[0]=M.T[i][k];return r2;});}
   const ord=optimiza(T,S.vuelta);
   // tramos con hora estimada de llegada
   const legs=[];let t=hm2min(S.salida),prev=0;
-  if(S.desde){const now=new Date();t=now.getHours()*60+now.getMinutes();}
+  if(DS){const now=new Date();t=now.getHours()*60+now.getMinutes();}
   for(const k of ord){const km=M.D[prev][k],min=M.T[prev][k];t+=min;legs.push({p:pts[k],km,min,llega:t});t+=PARADA_MIN;prev=k;}
   let vueltaLeg=null;
-  if(S.vuelta&&ord.length){const back=S.desde?pts.length-1:0,km=M.D[prev][back],min=M.T[prev][back];t+=min;vueltaLeg={km,min,llega:t};}
+  if(S.vuelta&&ord.length){const back=DS?pts.length-1:0,km=M.D[prev][back],min=M.T[prev][back];t+=min;vueltaLeg={km,min,llega:t};}
   S.orden=legs;S.vueltaLeg=vueltaLeg;S.fuente=M.fuente;
   // número de parada fijo para hoy: el del orden óptimo calculado desde la nave
   // se fija la primera vez que se calcula la ruta del día (con nada entregado) y ya no cambia: es el número que lleva el bulto
@@ -1084,6 +1148,8 @@ const rkey=()=>S.ruta?(S.ruta.fecha||'sin-fecha'):'x';
 const numDe=p=>S.num&&S.num[p.id]||'·';
 const porNum=(a,b)=>(+numDe(a)||99)-(+numDe(b)||99);
 const ICON={
+  chev:'<svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>',
+  box:'<svg class="i" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
   cam:'<svg class="i" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
   nav:'<svg class="i" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg>',
   phone:'<svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
@@ -1100,6 +1166,7 @@ function toast(t){const el=document.getElementById('toast');el.textContent=t;el.
 const navURL=p=>'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+(p.lat!=null?p.lat+','+p.lon:encodeURIComponent(p.dir));
 
 /* ============ vistas ============ */
+function entra(){const m=document.getElementById('main');m.classList.remove('in');void m.offsetWidth;m.classList.add('in');}
 function render(){
   const r=S.ruta,m=document.getElementById('main');
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===S.tab));
@@ -1125,7 +1192,9 @@ function vCarga(r){
   for(const p of P)for(const [n,q] of p.lin){const k=n.trim();(prods[k]=prods[k]||{n:k,q:0,por:[]});prods[k].q+=q;prods[k].por.push([numDe(p),q]);bultos+=q;}
   const L=Object.values(prods).sort((a,b)=>b.q-a.q||a.n.localeCompare(b.n,'es'));
   const cobrar=P.reduce((s,p)=>s+p.importe,0),cargados=L.filter(x=>S.cargado[x.n]).length;
-  let h=`<div class="kpis"><div class="kpi"><small>Bultos</small><b class="num">${bultos}</b></div><div class="kpi"><small>Productos</small><b class="num">${cargados}<span>/ ${L.length}</span></b></div><div class="kpi"><small>Pedidos</small><b class="num">${eur(cobrar).replace(' €','')}<span>€</span></b></div></div>
+  const todo=L.length>0&&cargados===L.length,udsOk=L.reduce((s,x)=>s+(S.cargado[x.n]?x.q:0),0);
+  let h=`<div class="kpis"><div class="kpi"><small>Bultos</small><b class="num">${bultos}</b><span class="sub">${udsOk} cargados</span></div><div class="kpi"><small>Paradas</small><b class="num">${P.length}</b><span class="sub">clientes de hoy</span></div><div class="kpi"><small>A cobrar</small><b class="num">${eur(cobrar).replace(' €','')}<span>€</span></b><span class="sub">total de la ruta</span></div></div>
+  ${todo?`<section class="next"><small>Carga completa</small><b>Todo está en la furgoneta</b><p>${bultos} bultos para ${P.length} ${P.length===1?'parada':'paradas'}. Ya puedes salir.</p><div class="acts"><button class="btn pri" data-tab-go="pedidos">${ICON.nav}Empezar reparto</button></div></section>`:`<div class="cprog"><div><b>${cargados} de ${L.length}</b> productos cargados</div><i><u style="width:${L.length?cargados/L.length*100:0}%"></u></i></div>`}
   <div class="seg" role="tablist"><button data-cm="prod" class="${S.cargaModo==='prod'?'on':''}">Por producto</button><button data-cm="orden" class="${S.cargaModo==='orden'?'on':''}">Orden de carga</button></div>`;
   if(S.cargaModo==='prod'){
     h+=`<div class="sect">Hoja de carga <small>toca cada producto al subirlo</small></div><div class="sheet">`+L.map(x=>{
@@ -1140,31 +1209,25 @@ function vCarga(r){
   return h;
 }
 
-function vPedidos(r){
-  const q=S.q.trim().toLowerCase();
-  let P=[...r.paradas].sort(porNum);
-  const pend=P.filter(p=>!S.hecho[p.id]),hech=P.filter(p=>S.hecho[p.id]);
-  const efectivo=hech.reduce((s,p)=>s+(S.hecho[p.id].pago==='Efectivo'?S.hecho[p.id].total:0),0);
-  const otros=hech.reduce((s,p)=>s+(['Bizum','Tarjeta','Transferencia'].includes(S.hecho[p.id].pago)?S.hecho[p.id].total:0),0);
-  let h=`<div class="kpis"><div class="kpi"><small>Quedan</small><b class="num">${pend.length}<span>/ ${P.length}</span></b></div><div class="kpi"><small>Efectivo</small><b class="num">${eur(efectivo).replace(' €','')}<span>€</span></b></div><div class="kpi"><small>Otros cobros</small><b class="num">${eur(otros).replace(' €','')}<span>€</span></b></div></div>
-  <div class="acts" style="margin:0"><button class="btn sm" data-cierre>${ICON.check}Cierre del día</button></div>
-  <div class="seg"><button data-pf="pend" class="${S.pedFlt==='pend'?'on':''}">Pendientes · ${pend.length}</button><button data-pf="hech" class="${S.pedFlt==='hech'?'on':''}">Entregados · ${hech.length}</button><button data-pf="todos" class="${S.pedFlt==='todos'?'on':''}">Todos</button></div>
-  <label class="search">${ICON.search}<input id="q" type="search" placeholder="Buscar cliente o calle" value="${esc(S.q)}" autocomplete="off"></label>`;
-  P=S.pedFlt==='pend'?pend:S.pedFlt==='hech'?hech:P;
-  if(q)P=P.filter(p=>(p.cli+' '+p.dir+' '+p.zona).toLowerCase().includes(q));
-  if(!P.length)return h+`<div class="empty">${S.pedFlt==='pend'&&!q?'Todo entregado. Entrega el efectivo al volver a la nave.':'Ningún pedido coincide.'}</div>`;
-  const eta={};for(const l of S.orden||[])eta[l.p.id]=l.llega;
-  return h+P.map(p=>{
-    const d=S.hecho[p.id],uds=p.lin.reduce((s,l)=>s+l[1],0);
-    let c=`<article class="card${d?' done':''}"><div class="ch"><span class="badge">${d?ICON.check:numDe(p)}</span><div style="min-width:0"><b>${esc(p.cli)}</b><small>${esc(p.dir||'Sin dirección')}</small></div>${!d&&eta[p.id]!=null?`<div class="eta"><b>${min2hm(eta[p.id])}</b><small>llegada</small></div>`:''}</div>
-      <ul class="lines">${p.lin.map(l=>`<li><span>${esc(l[0])}</span><b>× ${l[1]}</b></li>`).join('')}</ul>
-      <div class="money"><span>Pedido <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}${p.fac?`<span class="chip neu">Factura ${esc(p.fac)}</span>`:''}${p.pago&&!d&&S.cobrar!==p.id?`<span class="chip neu">Suele pagar: ${esc(pagoTxt(p.pago)==='Pendiente de cobro'?'a cuenta':p.pago)}</span>`:''}</div>`;
-    if(p.notas)c+=`<div class="note">${esc(p.notas)}</div>`;
-
-    if(p.tel)c+=`<div class="tel">Teléfono: <b>${esc(p.tel)}</b></div>`;
-    if(d){c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:d.pago==='A cuenta'?`<span class="chip warn">${ICON.check}Entregado · pendiente de cobro</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':'Cobrada '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}${d.firma?' · firmado':''}${d.foto?' · con foto':''}</span></div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}${d.inc||!d.sync||S.ruta.ejemplo?`<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`:`<p class="lock">${ICON.info}<span>Ya está en la nave${p.fac?' y la factura '+esc(p.fac)+' está cerrada':''}. Si hay que corregir algo, avisa en la nave.</span></p>`}`;}
-    else{
-      c+=`<div class="acts"><a class="btn" href="${navURL(p)}" target="_blank" rel="noopener">${ICON.nav}Cómo llegar</a>${p.tel?`<a class="btn" href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}Llamar</a><a class="btn" href="${esc(waURL(p,eta[p.id]))}" target="_blank" rel="noopener">${ICON.chat}Avisar que llego</a>`:''}</div>`;
+function estadoTxt(d){return d.inc?'No entregado · '+d.inc:d.pago==='A cuenta'?'Pendiente de cobro':d.pago==='—'?'Entregado':'Cobrada · '+d.pago;}
+function envioTxt(d){return S.ruta.ejemplo?'':d.sync?'en la nave':'sin enviar';}
+// fila cerrada: lo justo para reconocer la parada; se abre al tocar
+function fila(p,eta){const d=S.hecho[p.id];
+  return `<button class="fila${d?' done':''}${d&&d.inc?' inc':''}" data-abre="${esc(p.id)}" aria-expanded="false"><span class="badge">${d?(d.inc?ICON.x:ICON.check):numDe(p)}</span><span class="t"><b>${esc(p.cli)}</b><small>${d?esc(estadoTxt(d))+' · '+esc(d.t):esc(p.dir||'Sin dirección')}</small></span><span class="r"><b class="num">${eur(d&&!d.inc&&d.pago!=='A cuenta'&&d.pago!=='—'?d.total:p.importe)}</b><small>${d?envioTxt(d):eta!=null?'llega '+min2hm(eta):''}</small></span><span class="chev">${ICON.chev}</span></button>`;}
+// tarjeta abierta; la «siguiente parada» lleva cabecera propia
+function tarjeta(p,eta,o){o=o||{};
+  const d=S.hecho[p.id],uds=p.lin.reduce((s,l)=>s+l[1],0),leg=o.leg;
+  let c=o.hero?`<article class="card hero"><div class="hero-top"><small>Siguiente parada${leg?' · llegada '+min2hm(leg.llega):''}</small><b>${numDe(p)} · ${esc(p.cli)}</b><p>${esc(p.dir||'Sin dirección')}${leg?` · ${leg.km.toFixed(1)} km · ${durTxt(leg.min)}`:''}</p></div><div class="hero-body">`
+    :`<article class="card${d?' done':''}${d&&d.inc?' inc':''}"><button class="ch" data-abre="${esc(p.id)}" aria-expanded="true"><span class="badge">${d?(d.inc?ICON.x:ICON.check):numDe(p)}</span><span style="min-width:0"><b>${esc(p.cli)}</b><small>${esc(p.dir||'Sin dirección')}</small></span><span class="chev up">${ICON.chev}</span></button>`;
+  if(!d)c+=`<div class="qa"><a class="go" href="${navURL(p)}" target="_blank" rel="noopener">${ICON.nav}<span>Navegar</span></a>${p.tel?`<a href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}<span>Llamar</span></a><a href="${esc(waURL(p,eta))}" target="_blank" rel="noopener">${ICON.chat}<span>Avisar que llego</span></a>`:''}</div>`;
+  c+=`<ul class="lines">${p.lin.map(l=>`<li><span>${esc(l[0])}</span><b>× ${l[1]}</b></li>`).join('')}</ul>
+      <div class="money"><span>A cobrar <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}${p.fac?`<span class="chip neu">Factura ${esc(p.fac)}</span>`:''}${p.pago&&!d&&S.cobrar!==p.id?`<span class="chip neu">Suele pagar: ${esc(p.pago==='A cuenta'?'a cuenta':p.pago)}</span>`:''}</div>`;
+  if(p.notas)c+=`<div class="note">${esc(p.notas)}</div>`;
+  if(p.tel)c+=`<div class="tel">Teléfono: <b>${esc(p.tel)}</b></div>`;
+  if(d){const env=envioTxt(d);
+    c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:d.pago==='A cuenta'?`<span class="chip warn">${ICON.check}Entregado · pendiente de cobro</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':'Cobrada '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}${d.firma?' · firmado':''}${d.foto?' · con foto':''}</span>${env?`<span class="chip ${d.sync?'neu':'warn'}">${d.sync?'En la nave':'Sin enviar: saldrá al volver la cobertura'}</span>`:''}</div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}
+      ${d.inc||!d.sync||S.ruta.ejemplo?`<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`:`<p class="lock">${ICON.info}<span>Ya está en la nave${p.fac?' y la factura '+esc(p.fac)+' está cerrada':''}. Si hay que corregir algo, avisa en la nave.</span></p>`}`;}
+  else{
       if(S.cobrar===p.id){
         const M=S.met&&S.met.id===p.id?S.met:(S.met={id:p.id,v:'',imp:null}),met=M.v,cob=PAGOS_COB.includes(met);
         const hab=p.pago==='Recibo domiciliado'?'A cuenta':p.pago,imp=M.imp!=null?M.imp:String(+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',',');
@@ -1178,9 +1241,31 @@ function vPedidos(r){
           <div class="acts"><button class="btn pri" data-confok="${esc(p.id)}"${met?'':' disabled'}>${ICON.check}${!met?'Elige cómo ha pagado':met==='A cuenta'?'Confirmar · pendiente de cobro':'Confirmar · cobrada en '+metMin(met)}</button><button class="btn sm" data-cobrar="">Cancelar</button></div>`;
       }else if(S.inc&&S.inc.id===p.id){
         c+=`<div class="pay">${MOTIVOS.map(m=>`<button data-inc="${esc(m)}" class="${S.inc.motivo===m?'on':''}">${esc(m)}</button>`).join('')}</div><textarea class="incn" id="incNota" maxlength="300" placeholder="Nota para la nave (opcional): qué ha pasado, cuándo volver…">${esc(S.inc.nota||'')}</textarea><div class="acts"><button class="btn pri" data-incok="${esc(p.id)}"${S.inc.motivo?'':' disabled'}>Guardar incidencia</button><button class="btn sm" data-noent="">Cancelar</button></div>`;
-      }else c+=`<div class="acts"><button class="btn pri" data-cobrar="${esc(p.id)}">${ICON.check}Confirmar entrega</button><button class="btn" data-noent="${esc(p.id)}">${ICON.x}No entregado</button></div>`;
-    }
-    return c+'</article>';}).join('');
+      }else c+=`<div class="acts fin"><button class="btn pri xl" data-cobrar="${esc(p.id)}">${ICON.check}Confirmar entrega</button><button class="btn ghost" data-noent="${esc(p.id)}">${ICON.x}No se ha podido entregar</button></div>`;
+  }
+  return c+(o.hero?'</div>':'')+'</article>';
+}
+function vPedidos(r){
+  const q=S.q.trim().toLowerCase();
+  let P=[...r.paradas].sort(porNum);
+  const pend=P.filter(p=>!S.hecho[p.id]),hech=P.filter(p=>S.hecho[p.id]),ok=hech.filter(p=>!S.hecho[p.id].inc);
+  const efectivo=hech.reduce((s,p)=>s+(S.hecho[p.id].pago==='Efectivo'?S.hecho[p.id].total:0),0);
+  const otros=hech.reduce((s,p)=>s+(['Bizum','Tarjeta','Transferencia'].includes(S.hecho[p.id].pago)?S.hecho[p.id].total:0),0);
+  const eta={},legs={};for(const l of S.orden||[]){eta[l.p.id]=l.llega;legs[l.p.id]=l;}
+  const next=pend.length?((S.orden||[]).map(l=>l.p).find(x=>!S.hecho[x.id])||pend[0]):null,conHero=!!next&&!q&&S.pedFlt!=='hech';
+  let h=`<div class="kpis"><div class="kpi"><small>Quedan</small><b class="num">${pend.length}<span>/ ${P.length}</span></b><span class="sub">${hech.length?hech.length+(hech.length===1?' hecha':' hechas'):'sin empezar'}</span></div><div class="kpi"><small>Efectivo</small><b class="num">${eur(efectivo).replace(' €','')}<span>€</span></b><span class="sub">para la nave</span></div><div class="kpi"><small>Otros cobros</small><b class="num">${eur(otros).replace(' €','')}<span>€</span></b><span class="sub">Bizum, tarjeta…</span></div></div>`;
+  if(!pend.length)h+=`<section class="next"><small>Ruta terminada</small><b>${ok.length} ${ok.length===1?'entrega hecha':'entregas hechas'}${hech.length-ok.length?' · '+(hech.length-ok.length)+' sin entregar':''}</b><p>${efectivo>0?'Entrega '+eur(efectivo)+' en efectivo al volver a la nave.':'No llevas efectivo que entregar.'} Repasa el cierre antes de irte.</p><div class="acts"><button class="btn pri" data-cierre>${ICON.check}Cierre del día</button></div></section>`;
+  if(conHero)h+=tarjeta(next,eta[next.id],{hero:true,leg:legs[next.id]});
+  h+=`<div class="seg"><button data-pf="pend" class="${S.pedFlt==='pend'?'on':''}">Pendientes · ${pend.length}</button><button data-pf="hech" class="${S.pedFlt==='hech'?'on':''}">Hechas · ${hech.length}</button><button data-pf="todos" class="${S.pedFlt==='todos'?'on':''}">Todas</button></div>`;
+  if(P.length>5||q)h+=`<label class="search">${ICON.search}<input id="q" type="search" placeholder="Buscar cliente o calle" value="${esc(S.q)}" autocomplete="off"></label>`;
+  let L=S.pedFlt==='pend'?pend:S.pedFlt==='hech'?hech:P;
+  if(conHero)L=L.filter(p=>p.id!==next.id);
+  if(S.pedFlt==='pend')L=[...L].sort((x,y)=>(eta[x.id]??1e9)-(eta[y.id]??1e9)||porNum(x,y));
+  if(q)L=L.filter(p=>(p.cli+' '+p.dir+' '+p.zona).toLowerCase().includes(q));
+  if(!L.length)h+=`<div class="empty">${q?'Ningún pedido coincide.':S.pedFlt==='hech'?'Todavía no has hecho ninguna entrega.':conHero?'Es la última parada.':'No queda nada pendiente.'}</div>`;
+  else h+=`<div class="sect">${S.pedFlt==='hech'?'Entregas hechas':conHero&&S.pedFlt==='pend'?'Después':'Paradas'} <small>toca una para abrirla</small></div><div class="rows">`+L.map(p=>(S.abre===p.id||S.cobrar===p.id||(S.inc&&S.inc.id===p.id))?tarjeta(p,eta[p.id]):fila(p,eta[p.id])).join('')+`</div>`;
+  if(pend.length)h+=`<div class="acts"><button class="btn" data-cierre>${ICON.check}Cierre del día</button></div>`;
+  return h;
 }
 
 function vRuta(r){
@@ -1189,20 +1274,20 @@ function vRuta(r){
   const fin=S.vueltaLeg?S.vueltaLeg.llega:L.length?L[L.length-1].llega+PARADA_MIN:null;
   let h='';
   if(L.length){const n=L[0].p;
-    h+=`<section class="next"><small>${S.desde?'Siguiente desde donde estás':'Primera parada'} · llegada ${min2hm(L[0].llega)}</small><b>${numDe(n)} · ${esc(n.cli)}</b><p>${esc(n.dir)} · ${L[0].km.toFixed(1)} km · ${durTxt(L[0].min)}</p>
+    h+=`<section class="next"><small>${S.desde?'Siguiente desde donde estás':S.origen?'Siguiente parada':'Primera parada'} · llegada ${min2hm(L[0].llega)}</small><b>${numDe(n)} · ${esc(n.cli)}</b><p>${esc(n.dir)} · ${L[0].km.toFixed(1)} km · ${durTxt(L[0].min)}</p>
       <div class="acts"><a class="btn pri" href="${navURL(n)}" target="_blank" rel="noopener">${ICON.nav}Navegar</a><button class="btn" data-tab-go="pedidos">Ver pedido</button></div></section>`;}
   else if(r.paradas.length)h+=`<div class="empty">Ruta terminada${S.vueltaLeg===null&&S.vuelta?'. Vuelve a la nave':''}.</div>`;
   h+=`<div class="kpis"><div class="kpi"><small>Distancia</small><b class="num">${km.toFixed(1)}<span>km</span></b></div><div class="kpi"><small>Conducción</small><b class="num">${durTxt(cond)}</b></div><div class="kpi"><small>${S.vuelta?'En la nave':'Fin'}</small><b class="num">${fin!=null?min2hm(fin):'—'}</b></div></div>`;
   h+=`<div id="map" role="img" aria-label="Mapa de la ruta"></div>`;
   h+=`<div class="opts"><label class="tog">Salida <input id="salida" type="time" value="${esc(S.salida)}"></label><button class="tog${S.vuelta?' on':''}" data-vuelta><i></i>Volver a la nave</button><button class="tog${S.desde?' on':''}" data-desde>${ICON.loc}${S.desde?'Desde donde estoy':'Desde la nave'}</button><button class="tog${S.osrm?' on':''}" data-osrm title="Pide los tiempos reales a un servidor de OpenStreetMap: le envía las coordenadas de las paradas"><i></i>Tiempos por carretera</button></div>`;
   // Google Maps admite 9 paradas intermedias: si hay más, la ruta va en tramos
-  if(L.length){const pts=L.map(l=>l.p),org=S.desde||r.nave,tramos=[];let o=org;
+  if(L.length){const pts=L.map(l=>l.p),org=S.origen||r.nave,tramos=[];let o=org;
     for(let i=0;i<pts.length;i+=9){const ch=pts.slice(i,i+9),last=i+9>=pts.length;let dest=ch[ch.length-1],way=ch.slice(0,-1);
       if(last&&S.vuelta){dest=r.nave;way=ch;}
       tramos.push('https://www.google.com/maps/dir/?api=1&travelmode=driving&origin='+o.lat+','+o.lon+'&destination='+dest.lat+','+dest.lon+(way.length?'&waypoints='+way.map(p=>p.lat+','+p.lon).join('%7C'):''));o=ch[ch.length-1];}
     h+=`<div class="acts">${tramos.map((u,i)=>`<a class="btn" href="${u}" target="_blank" rel="noopener">${ICON.map}${tramos.length>1?'Tramo '+(i+1)+' en Google Maps':'Ruta completa en Google Maps'}</a>`).join('')}</div>`;}
   h+=`<div class="sect">Orden de paradas <small>${L.length} por hacer</small></div><div class="stops">`;
-  h+=`<div class="st nave"><span class="h">${S.desde?'Ahora':esc(S.salida)}</span><span class="n">${S.desde?'●':'N'}</span><div class="t"><b>${S.desde?'Tu posición':esc(r.nave.nombre)}</b><small>Salida</small></div><span class="km"></span></div>`;
+  h+=`<div class="st nave"><span class="h">${S.origen?'Ahora':esc(S.salida)}</span><span class="n">${S.origen?'●':'N'}</span><div class="t"><b>${S.origen?esc(S.origen.nombre||'Tu posición'):esc(r.nave.nombre)}</b><small>Salida</small></div><span class="km"></span></div>`;
   h+=L.map(l=>`<div class="st"><span class="h">${min2hm(l.llega)}</span><span class="n">${numDe(l.p)}</span><div class="t"><b>${esc(l.p.cli)}</b><small>${esc(l.p.zona||l.p.dir)}</small></div><span class="km">${l.km.toFixed(1)} km<br>${durTxt(l.min)}</span></div>`).join('');
   if(S.vueltaLeg)h+=`<div class="st nave"><span class="h">${min2hm(S.vueltaLeg.llega)}</span><span class="n">N</span><div class="t"><b>Vuelta a la nave</b><small>${esc(r.nave.nombre)}</small></div><span class="km">${S.vueltaLeg.km.toFixed(1)} km<br>${durTxt(S.vueltaLeg.min)}</span></div>`;
   const hech=[...r.paradas].filter(p=>S.hecho[p.id]).sort(porNum);
@@ -1261,24 +1346,25 @@ function mapaSVG(el,r){
 function guarda(){guardaLocal();}
 document.addEventListener('click',ev=>{
   const t=ev.target.closest('button,[data-tab-go]');if(!t)return;
-  if(t.dataset.tab){S.tab=t.dataset.tab;LS.set('tab',S.tab);if(S.map){S.map.remove();S.map=null;}render();window.scrollTo(0,0);return;}
+  if(t.dataset.tab){S.tab=t.dataset.tab;LS.set('tab',S.tab);if(S.map){S.map.remove();S.map=null;}render();entra();window.scrollTo(0,0);return;}
   if(t.dataset.tabGo){S.tab=t.dataset.tabGo;S.pedFlt='pend';if(S.map){S.map.remove();S.map=null;}render();window.scrollTo(0,0);return;}
   if(t.dataset.cm){S.cargaModo=t.dataset.cm;LS.set('cargaModo',S.cargaModo);render();return;}
   if(t.dataset.load!=null){const k=t.dataset.load;S.cargado[k]=!S.cargado[k];if(!S.cargado[k])delete S.cargado[k];guarda();render();return;}
   if(t.dataset.pf){S.pedFlt=t.dataset.pf;render();return;}
   {const ci=document.getElementById('cobImp');if(ci&&S.met)S.met.imp=ci.value;}   // lo escrito en «Importe cobrado» no se pierde al tocar otro botón
+  if(t.dataset.abre!=null){S.abre=S.abre===t.dataset.abre?null:t.dataset.abre;S.cobrar=null;S.inc=null;S.met=null;render();return;}
   if(t.dataset.cobrar!=null){S.cobrar=t.dataset.cobrar||null;S.met=null;S.inc=null;S.conDeuda=true;render();return;}
   if(t.dataset.met&&S.cobrar===t.dataset.id){S.met=Object.assign(S.met||{id:t.dataset.id,imp:null},{id:t.dataset.id,v:t.dataset.met});render();return;}
   if(t.dataset.noent!=null){S.inc=t.dataset.noent?{id:t.dataset.noent,motivo:'',nota:''}:null;S.cobrar=null;render();return;}
   if(t.dataset.inc!=null&&S.inc){const n=document.getElementById('incNota');if(n)S.inc.nota=n.value;S.inc.motivo=t.dataset.inc;render();return;}
   if(t.dataset.incok){const p=S.ruta.paradas.find(x=>x.id===t.dataset.incok);if(!p||!S.inc||!S.inc.motivo)return;const n=document.getElementById('incNota'),now=new Date();
-    S.hecho[p.id]={inc:S.inc.motivo,nota:String(n?n.value:S.inc.nota||'').trim().slice(0,300),pago:'—',total:0,t:min2hm(now.getHours()*60+now.getMinutes())};S.inc=null;guarda();
+    S.hecho[p.id]={ts:Date.now(),inc:S.inc.motivo,nota:String(n?n.value:S.inc.nota||'').trim().slice(0,300),pago:'—',total:0,t:min2hm(now.getHours()*60+now.getMinutes())};S.inc=null;S.abre=null;window.scrollTo({top:0,behavior:'smooth'});guarda();
     toast(`${p.cli}: no entregado (${S.hecho[p.id].inc.toLowerCase()})`);subeEntrega(p,true);calcula();return;}
   if(t.hasAttribute('data-cierre')){abreCierre();return;}
   if(t.hasAttribute('data-deuda')){S.conDeuda=S.conDeuda===false;if(S.met)S.met.imp=null;render();return;}
   if(t.dataset.confok){const p=S.ruta.paradas.find(x=>x.id===t.dataset.confok);if(!p||!S.met||S.met.id!==p.id||!S.met.v)return;const met=S.met.v,now=new Date();
     let total=0;if(met!=='A cuenta'){const v=numTxt(S.met.imp!=null?S.met.imp:p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0));if(!isFinite(v)){toast('Escribe el importe cobrado');return;}total=v;}
-    const pr=pruebaDe(p);S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes()),firma:!!pr.firma,foto:!!pr.foto,deuda:met!=='A cuenta'&&S.conDeuda!==false&&p.debe>0&&total>=+(p.importe+p.debe-0.01).toFixed(2)?+p.debe:0};S.cobrar=null;S.met=null;S.prueba=null;guarda();subeEntrega(p,true);if(pr.firma||pr.foto)guardaPrueba(p,pr);
+    const pr=pruebaDe(p);S.hecho[p.id]={ts:Date.now(),pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes()),firma:!!pr.firma,foto:!!pr.foto,deuda:met!=='A cuenta'&&S.conDeuda!==false&&p.debe>0&&total>=+(p.importe+p.debe-0.01).toFixed(2)?+p.debe:0};S.cobrar=null;S.met=null;S.prueba=null;S.abre=null;try{navigator.vibrate&&navigator.vibrate(20);}catch(e){}window.scrollTo({top:0,behavior:'smooth'});guarda();subeEntrega(p,true);if(pr.firma||pr.foto)guardaPrueba(p,pr);
     toast(met==='A cuenta'?`${p.cli}: entregado, pendiente de cobro`:`${p.cli}: cobrada ${eur(total)} en ${metMin(met)}`);calcula();return;}
   if(t.dataset.undo){const p=S.ruta.paradas.find(x=>x.id===t.dataset.undo);delete S.hecho[t.dataset.undo];guarda();if(p){subeEntrega(p,false);quitaPrueba(p);}calcula();return;}
   if(t.hasAttribute('data-vuelta')){S.vuelta=!S.vuelta;LS.set('vuelta',S.vuelta);calcula();return;}
