@@ -917,6 +917,26 @@ button,.btn,a.btn,label.btn{touch-action:manipulation;-webkit-tap-highlight-colo
 em,small{font-size:max(11px,.8em)}
 .btn:disabled,.btn[disabled]{opacity:.42;cursor:not-allowed;filter:grayscale(.6);box-shadow:none}
 html,body{overflow-x:clip}
+
+/* ===== confirmar entrega (12/11) ===== */
+.chip.neu{background:var(--field);color:var(--ink-2)}
+.conf{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--line-2)}
+.conf-h{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}.conf-h b{font-size:15px}.conf-h small{font-size:12px;font-weight:700;color:var(--muted)}
+.conf-l{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.conf .pay{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+.conf .pay button{min-height:46px;font-size:14px;background:var(--card)}
+.conf .pay button.on{background:var(--red);color:var(--on-red);box-shadow:none}
+.pay button.hab::after,.pend.hab b::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-left:6px;vertical-align:middle}
+.pay button.on.hab::after{background:var(--on-red)}
+.pend{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:50px;padding:8px 12px;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font-weight:800;font-size:14px;text-align:left;color:var(--warn);transition:transform .12s cubic-bezier(.2,.8,.2,1),background-color .15s ease}
+.pend:active{transform:scale(.98)}
+.pend small{font-size:12px;font-weight:600;color:var(--muted)}
+.pend.on{background:var(--warn);color:var(--card);box-shadow:none}.pend.on small{color:var(--card);opacity:.88}
+.pend.hab::after{content:"habitual";font-size:11px;font-weight:800;color:var(--ok)}.pend.on.hab::after{color:var(--card)}
+.conf .imp{margin:2px 0 0}
+.aviso{margin:0;font-size:12.5px;line-height:1.4;font-weight:700;color:var(--warn)}.aviso:empty{display:none}
+.lock{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:12.5px;line-height:1.45;color:var(--muted)}.lock svg{width:16px;height:16px;flex:none;margin-top:1px}.lock b{color:var(--ink)}
+.cierre .w2{grid-column:1/-1}
 </style>
 
 </head><body>
@@ -949,7 +969,7 @@ html,body{overflow-x:clip}
 "use strict";
 /* ============ datos ============ */
 // Ruta de ejemplo con clientes y pedidos inventados (no hay ningún dato real en esta app: las rutas llegan cifradas de Supabase).
-const DEMO={"fecha": "2026-10-29", "nombre": "Ruta de ejemplo · Alcorcón, Móstoles y Getafe", "vehiculo": "GT-F1", "ejemplo": true, "nave": {"nombre": "Nave · C/ Rigel Nº 14 · Griñón", "lat": 40.202107, "lon": -3.856524}, "paradas": [{"move": "EJ-1", "cli": "Carnicería La Encina", "dir": "C/ del Olmo 12, Alcorcón", "tel": "", "lat": 40.34193, "lon": -3.83086, "zona": "Alcorcón", "importe": 191.22, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 4], ["Bolsas camiseta", 3], ["Servilletas", 2]]}, {"move": "EJ-2", "cli": "Frutas Hnos. Prado", "dir": "Av. de la Libertad 40, Móstoles", "tel": "", "lat": 40.3149, "lon": -3.85942, "zona": "Móstoles", "importe": 43.51, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]]}, {"move": "EJ-3", "cli": "Pollería El Corral", "dir": "Mercado Central, puesto 8, Alcorcón", "tel": "", "lat": 40.34027, "lon": -3.82726, "zona": "Alcorcón", "importe": 39.15, "debe": 85.5, "notas": "", "pago": "", "lin": [["Bandejas de corcho nº80", 1], ["Bolsas camiseta", 1], ["Guantes de nitrilo", 1]]}, {"move": "EJ-4", "cli": "Charcutería Sierra", "dir": "C/ Mayor 21, Getafe", "tel": "", "lat": 40.31135, "lon": -3.73193, "zona": "Getafe", "importe": 145.02, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 4], ["Bolsas camiseta", 3], ["Servilletas", 2]]}, {"move": "EJ-5", "cli": "Pescados Bahía", "dir": "Mercado Central, puesto 15, Alcorcón", "tel": "", "lat": 40.34764, "lon": -3.82047, "zona": "Alcorcón", "importe": 55.71, "debe": 120, "notas": "", "pago": "", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]]}, {"move": "EJ-6", "cli": "Ultramarinos Rosa", "dir": "Galería Sur, puesto 3, Móstoles", "tel": "", "lat": 40.32528, "lon": -3.86212, "zona": "Móstoles", "importe": 213.61, "debe": 0, "notas": "", "pago": "", "lin": [["Bandejas de corcho nº80", 4], ["Bolsas camiseta", 3], ["Guantes de nitrilo", 2]]}, {"move": "EJ-7", "cli": "Carnes Selectas Vega", "dir": "Galería Sur, puesto 10, Móstoles", "tel": "", "lat": 40.31823, "lon": -3.86722, "zona": "Móstoles", "importe": 246.17, "debe": 0, "notas": "", "pago": "", "lin": [["Estuches de loncheado H40", 5], ["Bolsas de vacío", 4], ["Papel alimentario 35×50", 2]]}, {"move": "EJ-8", "cli": "Panadería El Trigal", "dir": "C/ Real 5, Móstoles", "tel": "", "lat": 40.32377, "lon": -3.86267, "zona": "Móstoles", "importe": 98.27, "debe": 64.2, "notas": "", "pago": "", "lin": [["Film 45×300", 2], ["Bolsas camiseta", 2], ["Servilletas", 1]]}, {"move": "EJ-9", "cli": "Embutidos Montaña", "dir": "Galería Sur, puesto 14, Móstoles", "tel": "", "lat": 40.3165, "lon": -3.87298, "zona": "Móstoles", "importe": 56.18, "debe": 0, "notas": "", "pago": "", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]]}]};
+const DEMO={"fecha": "2026-10-29", "nombre": "Ruta de ejemplo · Alcorcón, Móstoles y Getafe", "vehiculo": "GT-F1", "ejemplo": true, "nave": {"nombre": "Nave · C/ Rigel Nº 14 · Griñón", "lat": 40.202107, "lon": -3.856524}, "paradas": [{"move": "EJ-1", "cli": "Carnicería La Encina", "dir": "C/ del Olmo 12, Alcorcón", "tel": "", "lat": 40.34193, "lon": -3.83086, "zona": "Alcorcón", "importe": 191.22, "debe": 0, "notas": "", "pago": "Bizum", "lin": [["Film 45×300", 4], ["Bolsas camiseta", 3], ["Servilletas", 2]], "fac": "EJ/101"}, {"move": "EJ-2", "cli": "Frutas Hnos. Prado", "dir": "Av. de la Libertad 40, Móstoles", "tel": "", "lat": 40.3149, "lon": -3.85942, "zona": "Móstoles", "importe": 43.51, "debe": 0, "notas": "", "pago": "Efectivo", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]], "fac": "EJ/102"}, {"move": "EJ-3", "cli": "Pollería El Corral", "dir": "Mercado Central, puesto 8, Alcorcón", "tel": "", "lat": 40.34027, "lon": -3.82726, "zona": "Alcorcón", "importe": 39.15, "debe": 85.5, "notas": "", "pago": "A cuenta", "lin": [["Bandejas de corcho nº80", 1], ["Bolsas camiseta", 1], ["Guantes de nitrilo", 1]], "fac": "EJ/103"}, {"move": "EJ-4", "cli": "Charcutería Sierra", "dir": "C/ Mayor 21, Getafe", "tel": "", "lat": 40.31135, "lon": -3.73193, "zona": "Getafe", "importe": 145.02, "debe": 0, "notas": "", "pago": "Efectivo", "lin": [["Film 45×300", 4], ["Bolsas camiseta", 3], ["Servilletas", 2]], "fac": "EJ/104"}, {"move": "EJ-5", "cli": "Pescados Bahía", "dir": "Mercado Central, puesto 15, Alcorcón", "tel": "", "lat": 40.34764, "lon": -3.82047, "zona": "Alcorcón", "importe": 55.71, "debe": 120, "notas": "", "pago": "Tarjeta", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]], "fac": "EJ/105"}, {"move": "EJ-6", "cli": "Ultramarinos Rosa", "dir": "Galería Sur, puesto 3, Móstoles", "tel": "", "lat": 40.32528, "lon": -3.86212, "zona": "Móstoles", "importe": 213.61, "debe": 0, "notas": "", "pago": "Transferencia", "lin": [["Bandejas de corcho nº80", 4], ["Bolsas camiseta", 3], ["Guantes de nitrilo", 2]], "fac": "EJ/106"}, {"move": "EJ-7", "cli": "Carnes Selectas Vega", "dir": "Galería Sur, puesto 10, Móstoles", "tel": "", "lat": 40.31823, "lon": -3.86722, "zona": "Móstoles", "importe": 246.17, "debe": 0, "notas": "", "pago": "Efectivo", "lin": [["Estuches de loncheado H40", 5], ["Bolsas de vacío", 4], ["Papel alimentario 35×50", 2]], "fac": "EJ/107"}, {"move": "EJ-8", "cli": "Panadería El Trigal", "dir": "C/ Real 5, Móstoles", "tel": "", "lat": 40.32377, "lon": -3.86267, "zona": "Móstoles", "importe": 98.27, "debe": 64.2, "notas": "", "pago": "Bizum", "lin": [["Film 45×300", 2], ["Bolsas camiseta", 2], ["Servilletas", 1]], "fac": "EJ/108"}, {"move": "EJ-9", "cli": "Embutidos Montaña", "dir": "Galería Sur, puesto 14, Móstoles", "tel": "", "lat": 40.3165, "lon": -3.87298, "zona": "Móstoles", "importe": 56.18, "debe": 0, "notas": "", "pago": "Recibo domiciliado", "lin": [["Film 45×300", 1], ["Bolsas camiseta", 1], ["Servilletas", 1]], "fac": "EJ/109"}]};
 const NAVE_DEF={nombre:'Nave · C/ Rigel Nº 14 · Griñón',lat:40.202107,lon:-3.856524};
 const PARADA_MIN=10;      // minutos por entrega (descarga, firma y cobro)
 const VEL_KMH=34;         // velocidad media sin conexión (mezcla de autovía y casco urbano)
@@ -961,6 +981,14 @@ const LS={get(k,d){try{const v=localStorage.getItem('gr_'+k);return v==null?d:JS
 const S={ruta:null,tab:LS.get('tab','carga'),cargaModo:LS.get('cargaModo','prod'),pedFlt:'pend',q:'',
   hecho:{},cargado:{},salida:'07:00',vuelta:true,orden:null,legs:null,fuente:'',geo:null,desde:null,map:null,layer:null};
 
+const PAGOS_COB=['Efectivo','Bizum','Tarjeta','Transferencia'];          // «Cobrada · …» (igual que en Gato Control)
+const PAGOS_HAB=[...PAGOS_COB,'A cuenta','Recibo domiciliado'];      // forma de pago habitual del cliente
+const pagoTxt=m=>m==='A cuenta'?'Pendiente de cobro':m;
+const metMin=m=>m==='Bizum'?m:String(m||'').toLowerCase();
+const numTxt=v=>{const x=parseFloat(String(v==null?'':v).replace(/\s|€/g,'').replace(',','.'));return isFinite(x)&&x>=0?+x.toFixed(2):NaN;};
+function avisoImp(p,txt){const v=numTxt(txt),esp=+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2);
+  if(!isFinite(v))return 'Escribe el importe cobrado.';
+  return Math.abs(v-esp)>0.01?`No coincide con lo que toca cobrar (${eur(esp)}). La nave lo revisará en el cierre.`:'';}
 function sanea(r){
   if(Array.isArray(r))r={paradas:r};
   if(!r||typeof r!=='object'||!Array.isArray(r.paradas))throw new Error('El archivo no tiene una lista de paradas («paradas»).');
@@ -972,6 +1000,7 @@ function sanea(r){
     tel:String(p.tel||'').replace(/[^\d+ ]/g,'').slice(0,40),
     lat:n(p.lat),lon:n(p.lon),zona:String(p.zona||'').slice(0,80),
     importe:n(p.importe)||0,debe:n(p.debe)||0,re:!!p.re,
+    pago:PAGOS_HAB.includes(p.pago)?p.pago:'',fac:String(p.fac||'').replace(/[^A-Za-z0-9\/\-. ]/g,'').slice(0,24),
     notas:String(p.notas||'').slice(0,600),hora:String(p.hora||'').slice(0,8),ofrece:String(p.ofrece||'').slice(0,200),
     lin:(Array.isArray(p.lin)?p.lin:Array.isArray(p.lineas)?p.lineas.map(l=>[l.n,l.q,l.precio]):[]).slice(0,80)
         .map(l=>[String(l&&l[0]||'').slice(0,120),n(l&&l[1])||1,l&&l[2]!=null?n(l[2]):null]).filter(l=>l[0])
@@ -1116,8 +1145,8 @@ function vPedidos(r){
   let P=[...r.paradas].sort(porNum);
   const pend=P.filter(p=>!S.hecho[p.id]),hech=P.filter(p=>S.hecho[p.id]);
   const efectivo=hech.reduce((s,p)=>s+(S.hecho[p.id].pago==='Efectivo'?S.hecho[p.id].total:0),0);
-  const otros=hech.reduce((s,p)=>s+(['Bizum','Tarjeta'].includes(S.hecho[p.id].pago)?S.hecho[p.id].total:0),0);
-  let h=`<div class="kpis"><div class="kpi"><small>Quedan</small><b class="num">${pend.length}<span>/ ${P.length}</span></b></div><div class="kpi"><small>Efectivo</small><b class="num">${eur(efectivo).replace(' €','')}<span>€</span></b></div><div class="kpi"><small>Bizum y tarjeta</small><b class="num">${eur(otros).replace(' €','')}<span>€</span></b></div></div>
+  const otros=hech.reduce((s,p)=>s+(['Bizum','Tarjeta','Transferencia'].includes(S.hecho[p.id].pago)?S.hecho[p.id].total:0),0);
+  let h=`<div class="kpis"><div class="kpi"><small>Quedan</small><b class="num">${pend.length}<span>/ ${P.length}</span></b></div><div class="kpi"><small>Efectivo</small><b class="num">${eur(efectivo).replace(' €','')}<span>€</span></b></div><div class="kpi"><small>Otros cobros</small><b class="num">${eur(otros).replace(' €','')}<span>€</span></b></div></div>
   <div class="acts" style="margin:0"><button class="btn sm" data-cierre>${ICON.check}Cierre del día</button></div>
   <div class="seg"><button data-pf="pend" class="${S.pedFlt==='pend'?'on':''}">Pendientes · ${pend.length}</button><button data-pf="hech" class="${S.pedFlt==='hech'?'on':''}">Entregados · ${hech.length}</button><button data-pf="todos" class="${S.pedFlt==='todos'?'on':''}">Todos</button></div>
   <label class="search">${ICON.search}<input id="q" type="search" placeholder="Buscar cliente o calle" value="${esc(S.q)}" autocomplete="off"></label>`;
@@ -1129,18 +1158,27 @@ function vPedidos(r){
     const d=S.hecho[p.id],uds=p.lin.reduce((s,l)=>s+l[1],0);
     let c=`<article class="card${d?' done':''}"><div class="ch"><span class="badge">${d?ICON.check:numDe(p)}</span><div style="min-width:0"><b>${esc(p.cli)}</b><small>${esc(p.dir||'Sin dirección')}</small></div>${!d&&eta[p.id]!=null?`<div class="eta"><b>${min2hm(eta[p.id])}</b><small>llegada</small></div>`:''}</div>
       <ul class="lines">${p.lin.map(l=>`<li><span>${esc(l[0])}</span><b>× ${l[1]}</b></li>`).join('')}</ul>
-      <div class="money"><span>Pedido <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}</div>`;
+      <div class="money"><span>Pedido <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}${p.fac?`<span class="chip neu">Factura ${esc(p.fac)}</span>`:''}${p.pago&&!d&&S.cobrar!==p.id?`<span class="chip neu">Suele pagar: ${esc(pagoTxt(p.pago)==='Pendiente de cobro'?'a cuenta':p.pago)}</span>`:''}</div>`;
     if(p.notas)c+=`<div class="note">${esc(p.notas)}</div>`;
 
     if(p.tel)c+=`<div class="tel">Teléfono: <b>${esc(p.tel)}</b></div>`;
-    if(d){c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':d.pago==='A cuenta'?'Apuntado a cuenta':'Cobrado '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}${d.firma?' · firmado':''}${d.foto?' · con foto':''}</span></div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`;}
+    if(d){c+=`<div class="money">${d.inc?`<span class="chip bad">${ICON.x}No entregado · ${esc(d.inc)}</span>`:d.pago==='A cuenta'?`<span class="chip warn">${ICON.check}Entregado · pendiente de cobro</span>`:`<span class="chip ok">${ICON.check}${d.pago==='—'?'Entregado':'Cobrada '+eur(d.total)+' · '+esc(d.pago)}</span>`}<span>${esc(d.t)}${d.firma?' · firmado':''}${d.foto?' · con foto':''}</span></div>${d.nota?`<div class="note">${esc(d.nota)}</div>`:''}${d.inc||!d.sync||S.ruta.ejemplo?`<div class="acts"><button class="btn sm" data-undo="${esc(p.id)}">${ICON.undo}Deshacer</button></div>`:`<p class="lock">${ICON.info}<span>Ya está en la nave${p.fac?' y la factura '+esc(p.fac)+' está cerrada':''}. Si hay que corregir algo, avisa en la nave.</span></p>`}`;}
     else{
       c+=`<div class="acts"><a class="btn" href="${navURL(p)}" target="_blank" rel="noopener">${ICON.nav}Cómo llegar</a>${p.tel?`<a class="btn" href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}Llamar</a><a class="btn" href="${esc(waURL(p,eta[p.id]))}" target="_blank" rel="noopener">${ICON.chat}Avisar que llego</a>`:''}</div>`;
       if(S.cobrar===p.id){
-        c+=`${p.debe>0?`<button class="tog${S.conDeuda!==false?' on':''}" data-deuda><i></i>Cobrar también lo de antes (${eur(p.debe)})</button>`:''}<label class="imp">Importe cobrado <input id="cobImp" inputmode="decimal" value="${esc(String(+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',','))}"> €</label>${bloquePrueba(p)}<div class="pay">${['Efectivo','Bizum','Tarjeta','A cuenta'].map(t=>`<button data-pay="${t}" data-id="${esc(p.id)}">${t}</button>`).join('')}</div><button class="btn sm" data-cobrar="">Cancelar</button>`;
+        const M=S.met&&S.met.id===p.id?S.met:(S.met={id:p.id,v:'',imp:null}),met=M.v,cob=PAGOS_COB.includes(met);
+        const hab=p.pago==='Recibo domiciliado'?'A cuenta':p.pago,imp=M.imp!=null?M.imp:String(+(p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0)).toFixed(2)).replace('.',',');
+        c+=`<div class="conf" role="group" aria-label="Cómo ha pagado"><div class="conf-h"><b>¿Cómo ha pagado?</b>${p.pago?`<small>Suele pagar: ${esc(p.pago==='A cuenta'?'a cuenta':p.pago)}</small>`:''}</div>
+          <small class="conf-l">Cobrada</small>
+          <div class="pay">${PAGOS_COB.map(t=>`<button data-met="${t}" data-id="${esc(p.id)}" class="${met===t?'on':''}${hab===t?' hab':''}" aria-pressed="${met===t}">${t}</button>`).join('')}</div>
+          <button class="pend${met==='A cuenta'?' on':''}${hab==='A cuenta'?' hab':''}" data-met="A cuenta" data-id="${esc(p.id)}" aria-pressed="${met==='A cuenta'}">Pendiente de cobro<small>Entregado sin cobrar: queda como deuda del cliente</small></button>
+          ${cob?`${p.debe>0?`<button class="tog${S.conDeuda!==false?' on':''}" data-deuda><i></i>Cobrar también lo de antes (${eur(p.debe)})</button>`:''}<label class="imp">Importe cobrado <input id="cobImp" inputmode="decimal" value="${esc(imp)}"> €</label><p class="aviso" id="cobAviso">${esc(avisoImp(p,imp))}</p>`:''}</div>
+          ${bloquePrueba(p)}
+          <p class="lock">${ICON.info}<span>Al confirmar, ${p.fac?'la factura <b>'+esc(p.fac)+'</b>':'la factura'} queda cerrada en la nave y ya no se cambia desde aquí.</span></p>
+          <div class="acts"><button class="btn pri" data-confok="${esc(p.id)}"${met?'':' disabled'}>${ICON.check}${!met?'Elige cómo ha pagado':met==='A cuenta'?'Confirmar · pendiente de cobro':'Confirmar · cobrada en '+metMin(met)}</button><button class="btn sm" data-cobrar="">Cancelar</button></div>`;
       }else if(S.inc&&S.inc.id===p.id){
         c+=`<div class="pay">${MOTIVOS.map(m=>`<button data-inc="${esc(m)}" class="${S.inc.motivo===m?'on':''}">${esc(m)}</button>`).join('')}</div><textarea class="incn" id="incNota" maxlength="300" placeholder="Nota para la nave (opcional): qué ha pasado, cuándo volver…">${esc(S.inc.nota||'')}</textarea><div class="acts"><button class="btn pri" data-incok="${esc(p.id)}"${S.inc.motivo?'':' disabled'}>Guardar incidencia</button><button class="btn sm" data-noent="">Cancelar</button></div>`;
-      }else c+=`<div class="acts"><button class="btn pri" data-cobrar="${esc(p.id)}">${ICON.check}Entregado</button><button class="btn" data-noent="${esc(p.id)}">${ICON.x}No entregado</button></div>`;
+      }else c+=`<div class="acts"><button class="btn pri" data-cobrar="${esc(p.id)}">${ICON.check}Confirmar entrega</button><button class="btn" data-noent="${esc(p.id)}">${ICON.x}No entregado</button></div>`;
     }
     return c+'</article>';}).join('');
 }
@@ -1168,7 +1206,7 @@ function vRuta(r){
   h+=L.map(l=>`<div class="st"><span class="h">${min2hm(l.llega)}</span><span class="n">${numDe(l.p)}</span><div class="t"><b>${esc(l.p.cli)}</b><small>${esc(l.p.zona||l.p.dir)}</small></div><span class="km">${l.km.toFixed(1)} km<br>${durTxt(l.min)}</span></div>`).join('');
   if(S.vueltaLeg)h+=`<div class="st nave"><span class="h">${min2hm(S.vueltaLeg.llega)}</span><span class="n">N</span><div class="t"><b>Vuelta a la nave</b><small>${esc(r.nave.nombre)}</small></div><span class="km">${S.vueltaLeg.km.toFixed(1)} km<br>${durTxt(S.vueltaLeg.min)}</span></div>`;
   const hech=[...r.paradas].filter(p=>S.hecho[p.id]).sort(porNum);
-  h+=hech.map(p=>`<div class="st done"><span class="h">${esc(S.hecho[p.id].t)}</span><span class="n">${ICON.check}</span><div class="t"><b>${esc(p.cli)}</b><small>Entregado</small></div><span class="km"></span></div>`).join('');
+  h+=hech.map(p=>`<div class="st done"><span class="h">${esc(S.hecho[p.id].t)}</span><span class="n">${ICON.check}</span><div class="t"><b>${esc(p.cli)}</b><small>${S.hecho[p.id].inc?'No entregado · '+esc(S.hecho[p.id].inc):S.hecho[p.id].pago==='A cuenta'?'Entregado · pendiente de cobro':'Entregado'}</small></div><span class="km"></span></div>`).join('');
   h+=`</div>`;
   if(sinLL.length)h+=`<div class="banner">${ICON.info}<span><b>${sinLL.length} sin ubicación en el mapa:</b> ${sinLL.map(p=>esc(p.cli)).join(', ')}. Van fuera de la ruta; «Cómo llegar» usa su dirección.</span></div>`;
   h+=`<p class="method"><b>Cómo se calcula:</b> el orden que da menos tiempo total entre todas las combinaciones posibles${r.paradas.length>14?' (aproximado: hay más de 13 paradas)':''}, ${S.vuelta?'saliendo y volviendo a la nave':'saliendo de la nave'}, con ${PARADA_MIN} min por entrega. Tiempos ${S.fuente==='carretera'?'reales por carretera (OpenStreetMap)':'estimados en el móvil (distancia × '+FACTOR_VIA+' a '+VEL_KMH+' km/h)'}.${S.osrm?' «Tiempos por carretera» envía las coordenadas de las paradas a un servidor de OpenStreetMap.':''}</p>`;
@@ -1228,18 +1266,20 @@ document.addEventListener('click',ev=>{
   if(t.dataset.cm){S.cargaModo=t.dataset.cm;LS.set('cargaModo',S.cargaModo);render();return;}
   if(t.dataset.load!=null){const k=t.dataset.load;S.cargado[k]=!S.cargado[k];if(!S.cargado[k])delete S.cargado[k];guarda();render();return;}
   if(t.dataset.pf){S.pedFlt=t.dataset.pf;render();return;}
-  if(t.dataset.cobrar!=null){S.cobrar=t.dataset.cobrar||null;S.inc=null;S.conDeuda=true;render();return;}
+  {const ci=document.getElementById('cobImp');if(ci&&S.met)S.met.imp=ci.value;}   // lo escrito en «Importe cobrado» no se pierde al tocar otro botón
+  if(t.dataset.cobrar!=null){S.cobrar=t.dataset.cobrar||null;S.met=null;S.inc=null;S.conDeuda=true;render();return;}
+  if(t.dataset.met&&S.cobrar===t.dataset.id){S.met=Object.assign(S.met||{id:t.dataset.id,imp:null},{id:t.dataset.id,v:t.dataset.met});render();return;}
   if(t.dataset.noent!=null){S.inc=t.dataset.noent?{id:t.dataset.noent,motivo:'',nota:''}:null;S.cobrar=null;render();return;}
   if(t.dataset.inc!=null&&S.inc){const n=document.getElementById('incNota');if(n)S.inc.nota=n.value;S.inc.motivo=t.dataset.inc;render();return;}
   if(t.dataset.incok){const p=S.ruta.paradas.find(x=>x.id===t.dataset.incok);if(!p||!S.inc||!S.inc.motivo)return;const n=document.getElementById('incNota'),now=new Date();
     S.hecho[p.id]={inc:S.inc.motivo,nota:String(n?n.value:S.inc.nota||'').trim().slice(0,300),pago:'—',total:0,t:min2hm(now.getHours()*60+now.getMinutes())};S.inc=null;guarda();
     toast(`${p.cli}: no entregado (${S.hecho[p.id].inc.toLowerCase()})`);subeEntrega(p,true);calcula();return;}
   if(t.hasAttribute('data-cierre')){abreCierre();return;}
-  if(t.hasAttribute('data-deuda')){S.conDeuda=S.conDeuda===false;render();return;}
-  if(t.dataset.pay){const p=S.ruta.paradas.find(x=>x.id===t.dataset.id);if(!p)return;const met=t.dataset.pay,now=new Date();
-    const inp=document.getElementById('cobImp'),v=inp?parseFloat(String(inp.value).replace(/\s/g,'').replace(',','.')):NaN,total=met==='A cuenta'?0:+(isFinite(v)&&v>=0?v:p.importe).toFixed(2);
-    const pr=pruebaDe(p);S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes()),firma:!!pr.firma,foto:!!pr.foto,deuda:met!=='A cuenta'&&S.conDeuda!==false&&p.debe>0&&total>=+(p.importe+p.debe-0.01).toFixed(2)?+p.debe:0};S.cobrar=null;S.prueba=null;guarda();subeEntrega(p,true);if(pr.firma||pr.foto)guardaPrueba(p,pr);
-    toast(met==='A cuenta'?`${p.cli}: apuntado a cuenta`:`${p.cli}: cobrado ${eur(total)} en ${met.toLowerCase()}`);calcula();return;}
+  if(t.hasAttribute('data-deuda')){S.conDeuda=S.conDeuda===false;if(S.met)S.met.imp=null;render();return;}
+  if(t.dataset.confok){const p=S.ruta.paradas.find(x=>x.id===t.dataset.confok);if(!p||!S.met||S.met.id!==p.id||!S.met.v)return;const met=S.met.v,now=new Date();
+    let total=0;if(met!=='A cuenta'){const v=numTxt(S.met.imp!=null?S.met.imp:p.importe+(S.conDeuda!==false&&p.debe>0?p.debe:0));if(!isFinite(v)){toast('Escribe el importe cobrado');return;}total=v;}
+    const pr=pruebaDe(p);S.hecho[p.id]={pago:met,total,t:min2hm(now.getHours()*60+now.getMinutes()),firma:!!pr.firma,foto:!!pr.foto,deuda:met!=='A cuenta'&&S.conDeuda!==false&&p.debe>0&&total>=+(p.importe+p.debe-0.01).toFixed(2)?+p.debe:0};S.cobrar=null;S.met=null;S.prueba=null;guarda();subeEntrega(p,true);if(pr.firma||pr.foto)guardaPrueba(p,pr);
+    toast(met==='A cuenta'?`${p.cli}: entregado, pendiente de cobro`:`${p.cli}: cobrada ${eur(total)} en ${metMin(met)}`);calcula();return;}
   if(t.dataset.undo){const p=S.ruta.paradas.find(x=>x.id===t.dataset.undo);delete S.hecho[t.dataset.undo];guarda();if(p){subeEntrega(p,false);quitaPrueba(p);}calcula();return;}
   if(t.hasAttribute('data-vuelta')){S.vuelta=!S.vuelta;LS.set('vuelta',S.vuelta);calcula();return;}
   if(t.hasAttribute('data-osrm')){S.osrm=!S.osrm;LS.set('osrm',S.osrm);calcula();return;}
@@ -1252,7 +1292,8 @@ document.addEventListener('click',ev=>{
   if(t.id==='btnImport'){abreMenu();return;}
   if(t.dataset.m){accionMenu(t.dataset.m,t.dataset.v);return;}
 });
-document.addEventListener('input',ev=>{if(ev.target.id==='q'){S.q=ev.target.value;const pos=ev.target.selectionStart;render();const q=document.getElementById('q');if(q){q.focus();try{q.setSelectionRange(pos,pos);}catch(e){}}}});
+document.addEventListener('input',ev=>{if(ev.target.id==='cobImp'&&S.met&&S.ruta){S.met.imp=ev.target.value;const p=S.ruta.paradas.find(x=>x.id===S.met.id),a=document.getElementById('cobAviso');if(p&&a)a.textContent=avisoImp(p,ev.target.value);return;}
+  if(ev.target.id==='q'){S.q=ev.target.value;const pos=ev.target.selectionStart;render();const q=document.getElementById('q');if(q){q.focus();try{q.setSelectionRange(pos,pos);}catch(e){}}}});
 document.addEventListener('change',ev=>{if(ev.target.id==='salida'){S.salida=ev.target.value||'07:00';LS.set('salida',S.salida);calcula();}});
 
 /* ============ conexión segura: Supabase (login por código) + cifrado de extremo a extremo ============ */
@@ -1457,13 +1498,15 @@ function waURL(p,llega){const t=String(p.tel||'').replace(/\D/g,''),n=t.length==
   return 'https://wa.me/'+n+'?text='+encodeURIComponent(`Hola, soy el repartidor de El Gato con Bolsas. Llego en unos ${m} minutos con vuestro pedido.`);}
 /* cierre del día: lo cobrado por forma de pago, lo apuntado a cuenta, incidencias y lo que queda */
 function textoCierre(){const r=S.ruta,P=[...r.paradas].sort(porNum),f=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}):'';
-  const tot={Efectivo:0,Bizum:0,Tarjeta:0},cta=[],inc=[],pend=[];
+  const tot={Efectivo:0,Bizum:0,Tarjeta:0,Transferencia:0},cta=[],inc=[],pend=[];
   for(const p of P){const h=S.hecho[p.id];if(!h){pend.push(p);continue;}if(h.inc)inc.push([p,h]);else if(h.pago==='A cuenta')cta.push(p);else if(tot[h.pago]!=null)tot[h.pago]+=+h.total||0;}
-  return {f,P,tot,cta,inc,pend};}
+  const ctaImp=cta.reduce((s,p)=>s+(+p.importe||0),0);
+  return {f,P,tot,cta,ctaImp,inc,pend};}
 function abreCierre(){
   const C=textoCierre(),sh=document.getElementById('sheet');sh.hidden=false;sh.className='sheetbg';const ent=C.P.length-C.pend.length-C.inc.length;
   sh.innerHTML=`<div class="panel pad" role="dialog" aria-modal="true" aria-labelledby="cT"><h2 id="cT">Cierre del día</h2><p>${esc(C.f)} · ${ent} entregados de ${C.P.length}${C.inc.length?' · '+C.inc.length+' sin entregar':''}${C.pend.length?' · '+C.pend.length+' pendientes':''}</p>
-    <div class="cierre"><div><small>Efectivo a entregar</small><b class="num">${eur(C.tot.Efectivo)}</b></div><div><small>Bizum</small><b class="num">${eur(C.tot.Bizum)}</b></div><div><small>Tarjeta</small><b class="num">${eur(C.tot.Tarjeta)}</b></div><div><small>A cuenta</small><b class="num">${C.cta.length}</b></div></div>
+    <div class="cierre"><div class="w2"><small>Efectivo a entregar</small><b class="num">${eur(C.tot.Efectivo)}</b></div><div><small>Bizum</small><b class="num">${eur(C.tot.Bizum)}</b></div><div><small>Tarjeta</small><b class="num">${eur(C.tot.Tarjeta)}</b></div><div><small>Transferencia</small><b class="num">${eur(C.tot.Transferencia)}</b></div><div><small>Pendiente de cobro</small><b class="num">${eur(C.ctaImp)}</b></div></div>
+    ${C.cta.length?`<div class="sect">Pendientes de cobro</div><ul class="clist">${C.cta.map(p=>`<li><span>${numDe(p)}. ${esc(p.cli)}${p.fac?'<br><small>Factura '+esc(p.fac)+'</small>':''}</span><span>${eur(p.importe)}</span></li>`).join('')}</ul>`:''}
     ${C.inc.length?`<div class="sect">No entregados</div><ul class="clist">${C.inc.map(([p,h])=>`<li><span><b>${numDe(p)}. ${esc(p.cli)}</b>${h.nota?'<br><small>'+esc(h.nota)+'</small>':''}</span><span>${esc(h.inc)}</span></li>`).join('')}</ul>`:''}
     ${C.pend.length?`<div class="sect">Sin hacer</div><ul class="clist">${C.pend.map(p=>`<li><span>${numDe(p)}. ${esc(p.cli)}</span><span>${eur(p.importe)}</span></li>`).join('')}</ul>`:''}
     <div class="acts"><button class="btn pri" data-m="copiaCierre">${ICON.check}Copiar resumen</button><button class="btn" data-m="x">Cerrar</button></div>
@@ -1489,7 +1532,7 @@ async function accionMenu(a,v){
   if(a==='demo'){cierraImport();SEC.rutaId=null;await ponRuta(sanea(DEMO));toast('Ruta de ejemplo (datos inventados)');return;}
   if(a==='clave'){cierraImport();try{await IDB.clear();}catch(e){}SEC.key=null;pantallaClave('Escribe tu clave nueva.');return;}
   if(a==='salir'){salir();return;}
-  if(a==='copiaCierre'){const C=textoCierre(),txt=`CIERRE · ${C.f}\nEfectivo: ${eur(C.tot.Efectivo)} · Bizum: ${eur(C.tot.Bizum)} · Tarjeta: ${eur(C.tot.Tarjeta)} · A cuenta: ${C.cta.length}\n`+(C.inc.length?'No entregados:\n'+C.inc.map(([p,h])=>`  ${numDe(p)}. ${p.cli}: ${h.inc}${h.nota?' ('+h.nota+')':''}`).join('\n')+'\n':'')+(C.pend.length?'Sin hacer: '+C.pend.map(p=>p.cli).join(', '):'');
+  if(a==='copiaCierre'){const C=textoCierre(),txt=`CIERRE · ${C.f}\nEfectivo: ${eur(C.tot.Efectivo)} · Bizum: ${eur(C.tot.Bizum)} · Tarjeta: ${eur(C.tot.Tarjeta)} · Transferencia: ${eur(C.tot.Transferencia)}\nPendiente de cobro: ${C.cta.length} (${eur(C.ctaImp)})${C.cta.length?'\n'+C.cta.map(p=>`  ${numDe(p)}. ${p.cli}${p.fac?' · '+p.fac:''}: ${eur(p.importe)}`).join('\n'):''}\n`+(C.inc.length?'No entregados:\n'+C.inc.map(([p,h])=>`  ${numDe(p)}. ${p.cli}: ${h.inc}${h.nota?' ('+h.nota+')':''}`).join('\n')+'\n':'')+(C.pend.length?'Sin hacer: '+C.pend.map(p=>p.cli).join(', '):'');
     try{await navigator.clipboard.writeText(txt);toast('Resumen copiado');}catch(e){toast('No se ha podido copiar');}return;}
 }
 function cierraImport(){const sh=document.getElementById('sheet');sh.hidden=true;sh.innerHTML='';}
