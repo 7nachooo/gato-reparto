@@ -1165,6 +1165,22 @@ const ICON={
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600);}
 const navURL=p=>'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+(p.lat!=null?p.lat+','+p.lon:encodeURIComponent(p.dir));
 
+/* Aviso de llegada al pulsar «Navegar» (13/11/2026): la primera vez que se navega a una parada con teléfono se abre WhatsApp con el aviso escrito
+   y queda abajo un botón «Navegar ahora». Son dos toques porque WhatsApp no deja enviar sin pulsar. Las siguientes veces «Navegar» va directo. */
+const AVISADO={};
+function navBanCierra(){const b=document.getElementById('navBan');if(b)b.remove();}
+document.addEventListener('click',ev=>{
+  const x=ev.target.closest&&ev.target.closest('[data-navban]');
+  if(x){ev.stopPropagation();if(x.dataset.navban==='x')ev.preventDefault();navBanCierra();return;}
+  const a=ev.target.closest&&ev.target.closest('a[data-avisa]');if(!a)return;
+  const id=a.dataset.pid;if(AVISADO[id])return;
+  AVISADO[id]=1;ev.preventDefault();ev.stopPropagation();
+  try{window.open(a.dataset.avisa,'_blank','noopener');}catch(e){}
+  navBanCierra();const b=document.createElement('div');b.id='navBan';
+  b.setAttribute('style','position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:9999;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:#3d1f1c;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:15px');
+  b.innerHTML='<span style="flex:1;min-width:160px">Aviso preparado para <b>'+esc(a.dataset.cli||'el cliente')+'</b>. Envíalo en WhatsApp y vuelve aquí.</span><a class="btn pri" data-navban="go" href="'+esc(a.getAttribute('href'))+'" target="_blank" rel="noopener">Navegar ahora</a><button type="button" class="btn" data-navban="x">Cerrar</button>';
+  document.body.appendChild(b);
+},true);
 /* ============ vistas ============ */
 function entra(){const m=document.getElementById('main');m.classList.remove('in');void m.offsetWidth;m.classList.add('in');}
 function render(){
@@ -1219,7 +1235,7 @@ function tarjeta(p,eta,o){o=o||{};
   const d=S.hecho[p.id],uds=p.lin.reduce((s,l)=>s+l[1],0),leg=o.leg;
   let c=o.hero?`<article class="card hero"><div class="hero-top"><small>Siguiente parada${leg?' · llegada '+min2hm(leg.llega):''}</small><b>${numDe(p)} · ${esc(p.cli)}</b><p>${esc(p.dir||'Sin dirección')}${leg?` · ${leg.km.toFixed(1)} km · ${durTxt(leg.min)}`:''}</p></div><div class="hero-body">`
     :`<article class="card${d?' done':''}${d&&d.inc?' inc':''}"><button class="ch" data-abre="${esc(p.id)}" aria-expanded="true"><span class="badge">${d?(d.inc?ICON.x:ICON.check):numDe(p)}</span><span style="min-width:0"><b>${esc(p.cli)}</b><small>${esc(p.dir||'Sin dirección')}</small></span><span class="chev up">${ICON.chev}</span></button>`;
-  if(!d)c+=`<div class="qa"><a class="go" href="${navURL(p)}" target="_blank" rel="noopener">${ICON.nav}<span>Navegar</span></a>${p.tel?`<a href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}<span>Llamar</span></a><a href="${esc(waURL(p,eta))}" target="_blank" rel="noopener">${ICON.chat}<span>Avisar que llego</span></a>`:''}</div>`;
+  if(!d)c+=`<div class="qa"><a class="go" href="${navURL(p)}" target="_blank" rel="noopener"${p.tel?` data-avisa="${esc(waURL(p,eta))}" data-pid="${esc(p.id)}" data-cli="${esc(p.cli)}"`:''}>${ICON.nav}<span>Navegar</span></a>${p.tel?`<a href="tel:${esc(p.tel.replace(/\s/g,''))}">${ICON.phone}<span>Llamar</span></a><a href="${esc(waURL(p,eta))}" target="_blank" rel="noopener">${ICON.chat}<span>Avisar que llego</span></a>`:''}</div>`;
   c+=`<ul class="lines">${p.lin.map(l=>`<li><span>${esc(l[0])}</span><b>× ${l[1]}</b></li>`).join('')}</ul>
       <div class="money"><span>A cobrar <b>${eur(p.importe)}</b></span><span>${uds} uds</span>${p.debe>0?`<span class="chip warn">Debe de antes ${eur(p.debe)}</span>`:''}${p.re?'<span class="chip warn">Recargo eq.</span>':''}${p.fac?`<span class="chip neu">Factura ${esc(p.fac)}</span>`:''}${p.pago&&!d&&S.cobrar!==p.id?`<span class="chip neu">Suele pagar: ${esc(p.pago==='A cuenta'?'a cuenta':p.pago)}</span>`:''}</div>`;
   if(p.notas)c+=`<div class="note">${esc(p.notas)}</div>`;
@@ -1275,7 +1291,7 @@ function vRuta(r){
   let h='';
   if(L.length){const n=L[0].p;
     h+=`<section class="next"><small>${S.desde?'Siguiente desde donde estás':S.origen?'Siguiente parada':'Primera parada'} · llegada ${min2hm(L[0].llega)}</small><b>${numDe(n)} · ${esc(n.cli)}</b><p>${esc(n.dir)} · ${L[0].km.toFixed(1)} km · ${durTxt(L[0].min)}</p>
-      <div class="acts"><a class="btn pri" href="${navURL(n)}" target="_blank" rel="noopener">${ICON.nav}Navegar</a><button class="btn" data-tab-go="pedidos">Ver pedido</button></div></section>`;}
+      <div class="acts"><a class="btn pri" href="${navURL(n)}" target="_blank" rel="noopener"${n.tel?` data-avisa="${esc(waURL(n,new Date().getHours()*60+new Date().getMinutes()+L[0].min))}" data-pid="${esc(n.id)}" data-cli="${esc(n.cli)}"`:''}>${ICON.nav}Navegar</a><button class="btn" data-tab-go="pedidos">Ver pedido</button></div></section>`;}
   else if(r.paradas.length)h+=`<div class="empty">Ruta terminada${S.vueltaLeg===null&&S.vuelta?'. Vuelve a la nave':''}.</div>`;
   h+=`<div class="kpis"><div class="kpi"><small>Distancia</small><b class="num">${km.toFixed(1)}<span>km</span></b></div><div class="kpi"><small>Conducción</small><b class="num">${durTxt(cond)}</b></div><div class="kpi"><small>${S.vuelta?'En la nave':'Fin'}</small><b class="num">${fin!=null?min2hm(fin):'—'}</b></div></div>`;
   h+=`<div id="map" role="img" aria-label="Mapa de la ruta"></div>`;
